@@ -57,41 +57,41 @@ template: |
 autolabeler:
   - label: 'feature'
     title:
-      - '/^feat/i'
+      - '^feat'
   - label: 'bugfix'
     title:
-      - '/^fix/i'
+      - '^fix'
   - label: 'chore'
     title:
-      - '/^chore/i'
+      - '^chore'
   - label: 'ci'
     title:
-      - '/^ci/i'
+      - '^ci'
     files:
       - '.github/**/*'
   - label: 'style'
     title:
-      - '/^style/i'
+      - '^style'
     files:
       - 'src/styles/**/*'
   - label: 'documentation'
     title:
-      - '/^docs/i'
+      - '^docs'
     files:
       - 'README.md'
       - 'images/**/*'
       - 'screenshots/**/*'
   - label: 'enhancement'
     title:
-      - '/^refactor/i'
+      - '^refactor'
   - label: 'code-quality'
     title:
-      - '/^tests/i'
+      - '^tests'
     files:
       - 'test/**/*'
   - label: 'dependencies'
     title:
-      - '/^build\(deps\)/i'
-      - '/^chore\(deps\)/i'
+      - '^build\(deps\)'
+      - '^chore\(deps\)'
 
 
