@@ -32,7 +32,7 @@ export default {
     resolve(),
     typescript({
       tsconfig: './tsconfig.json',
-      compilerOptions: { noEmit: false, declaration: false },
+      compilerOptions: { target: 'es2022', noEmit: false, declaration: false },
     }),
     image(),
     !dev && terser({ format: { comments: false } }),
