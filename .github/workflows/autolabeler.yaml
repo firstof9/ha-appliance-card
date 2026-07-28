@@ -1,17 +1,13 @@
-name: Release Drafter
+name: Auto Labeler
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-  pull_request:
-    types: [opened, reopened, synchronize]
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
 
 jobs:
-  update_release_draft:
+  labeler:
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +16,6 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: release-drafter/release-drafter@eada3c96a64734dd381cfbda23511034e328ddb0 # @v7
+      - uses: release-drafter/release-drafter/autolabeler@eada3c96a64734dd381cfbda23511034e328ddb0 # @v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
