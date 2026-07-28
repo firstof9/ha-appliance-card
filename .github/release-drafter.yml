@@ -58,25 +58,37 @@ autolabeler:
   - label: 'feature'
     title:
       - '^feat'
+      - '^feat:'
+      - '^feat\('
   - label: 'bugfix'
     title:
       - '^fix'
+      - '^fix:'
+      - '^fix\('
   - label: 'chore'
     title:
       - '^chore'
+      - '^chore:'
+      - '^chore\('
   - label: 'ci'
     title:
       - '^ci'
+      - '^ci:'
+      - '^ci\('
     files:
       - '.github/**/*'
   - label: 'style'
     title:
       - '^style'
+      - '^style:'
+      - '^style\('
     files:
       - 'src/styles/**/*'
   - label: 'documentation'
     title:
       - '^docs'
+      - '^docs:'
+      - '^docs\('
     files:
       - 'README.md'
       - 'images/**/*'
@@ -84,9 +96,13 @@ autolabeler:
   - label: 'enhancement'
     title:
       - '^refactor'
+      - '^refactor:'
+      - '^refactor\('
   - label: 'code-quality'
     title:
       - '^tests'
+      - '^test'
+      - '^test:'
     files:
       - 'test/**/*'
   - label: 'dependencies'
