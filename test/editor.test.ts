@@ -1,0 +1,51 @@
+import { describe, it, expect } from 'vitest';
+import '../src/editor';
+import { SmartthingsCardEditor } from '../src/editor';
+import { mockHass } from './mocks';
+
+describe('SmartthingsCardEditor with LocalThings', () => {
+  it('should generate form schema with localthings integration included', () => {
+    const editor = document.createElement('smartthings-card-editor') as SmartthingsCardEditor;
+    editor.setConfig({
+      type: 'custom:smartthings-card',
+      appliance_type: 'washer',
+    });
+    editor.hass = mockHass as any;
+
+    const schema = (editor as any)._schema();
+    const deviceSchema = schema.find((s: any) => s.name === 'device_id');
+    expect(deviceSchema.selector.device.integration).toContain('localthings');
+    expect(deviceSchema.selector.device.integration).toContain('smartthings');
+  });
+
+  it('should autofill LocalThings entities based on entity naming conventions', () => {
+    const editor = document.createElement('smartthings-card-editor') as SmartthingsCardEditor;
+    const localthingsHass = {
+      ...mockHass,
+      entities: {
+        'switch.washer_power_switch': { device_id: 'dev_local_1' },
+        'sensor.washer_operation_state': { device_id: 'dev_local_1' },
+        'sensor.washer_running_state': { device_id: 'dev_local_1' },
+        'sensor.washer_remaining_time': { device_id: 'dev_local_1' },
+      },
+      states: {
+        'switch.washer_power_switch': { state: 'on', attributes: { friendly_name: 'Washer Power Switch' } },
+        'sensor.washer_operation_state': { state: 'run', attributes: { friendly_name: 'Washer Operation State' } },
+        'sensor.washer_running_state': { state: 'wash', attributes: { friendly_name: 'Washer Running State' } },
+        'sensor.washer_remaining_time': { state: '00:25:00', attributes: { friendly_name: 'Washer Remaining Time' } },
+      },
+    };
+    editor.hass = localthingsHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:smartthings-card',
+      device_id: 'dev_local_1',
+      appliance_type: 'washer',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.washer_power_switch');
+    expect(autofilled.machine_state_entity).toBe('sensor.washer_operation_state');
+    expect(autofilled.job_state_entity).toBe('sensor.washer_running_state');
+    expect(autofilled.time_entity).toBe('sensor.washer_remaining_time');
+  });
+});
