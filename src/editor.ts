@@ -15,12 +15,16 @@ export class ApplianceCardEditor extends LitElement {
   private _schema() {
     const deviceId = this._config?.device_id;
     const integrations = ['smartthings', 'localthings'];
-    
+
     const baseSchema = [
       {
         name: 'device_id',
         label: 'Appliance Device',
-        selector: { device: { integration: integrations } },
+        selector: {
+          device: {
+            filter: integrations.map((integration) => ({ integration })),
+          },
+        },
       },
       {
         name: 'power_entity',
@@ -166,7 +170,7 @@ export class ApplianceCardEditor extends LitElement {
         device_id: value.device_id,
         appliance_type: this._config.appliance_type || value.appliance_type,
       } as SmartthingsCardConfig;
-      
+
       newConfig = this._autofillConfig(newConfig);
     }
 
@@ -189,7 +193,7 @@ export class ApplianceCardEditor extends LitElement {
     let newConfig = { ...config };
 
     // Filter entities by device_id if provided
-    const deviceEntities = deviceId 
+    const deviceEntities = deviceId
       ? entities.filter(id => (this.hass as any).entities?.[id]?.device_id === deviceId)
       : entities;
 
@@ -199,7 +203,7 @@ export class ApplianceCardEditor extends LitElement {
     // 1. Detect Appliance Type if not set or if device changed
     if (deviceId) {
       const allText = relevantEntities.map(id => id + ' ' + (this.hass!.states[id].attributes.friendly_name || '')).join(' ').toLowerCase();
-      
+
       if (allText.includes('refrigerator') || allText.includes('fridge') || allText.includes('freezer')) {
         newConfig.appliance_type = 'refrigerator';
       } else if (allText.includes('dishwasher')) {
@@ -232,7 +236,7 @@ export class ApplianceCardEditor extends LitElement {
     newConfig.power_entity = newConfig.power_entity || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
     newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_state']);
     newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state']);
-    newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left'], 'sensor');
+    newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity'], 'binary_sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock']);
     newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan'], 'fan') || findEntity(['_fan_speed'], 'number');
@@ -245,7 +249,7 @@ export class ApplianceCardEditor extends LitElement {
       newConfig.ice_maker_entity = newConfig.ice_maker_entity || findEntity(['_ice_maker', '_ice_maker_status', '_ice_maker_switch']);
       newConfig.filter_status_entity = newConfig.filter_status_entity || findEntity(['_filter_status', '_water_filter_status', '_filter_usage'], 'sensor');
       newConfig.filter_reset_entity = newConfig.filter_reset_entity || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'button') || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'switch');
-      
+
       const doors = relevantEntities.filter(id => (id.includes('_door') || id.includes('_door_open')) && id.startsWith('binary_sensor.'));
       if (doors.length > 0 && (!newConfig.door_entities || newConfig.door_entities.length === 0)) {
         newConfig.door_entities = doors;
@@ -257,4 +261,4 @@ export class ApplianceCardEditor extends LitElement {
 }
 
 @customElement('smartthings-card-editor')
-export class SmartthingsCardEditor extends ApplianceCardEditor {}
+export class SmartthingsCardEditor extends ApplianceCardEditor { }
