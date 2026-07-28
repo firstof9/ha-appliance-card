@@ -16,6 +16,21 @@ describe('SmartthingsCard rendering', () => {
     expect(element.shadowRoot?.querySelector('.container')).toBeNull();
   });
 
+  it('should render the card with appliance-card custom element', async () => {
+    const applianceElement = document.createElement('appliance-card') as SmartthingsCard;
+    document.body.appendChild(applianceElement);
+    applianceElement.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+    });
+    applianceElement.hass = mockHass as HomeAssistant;
+
+    await applianceElement.updateComplete;
+    const card = applianceElement.shadowRoot?.querySelector('ha-card');
+    expect(card).toBeTruthy();
+  });
+
   it('should render the card with microwave configuration', async () => {
     element.setConfig({
       type: 'custom:smartthings-card',

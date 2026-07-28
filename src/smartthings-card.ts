@@ -60,6 +60,9 @@ export class SmartthingsCard extends LitElement {
     }
 
     this.config = { ...config };
+    if (!this.config.type) {
+      this.config.type = 'custom:appliance-card';
+    }
     if (!this.config.appliance_type) {
       this.config.appliance_type = 'microwave';
     }
@@ -622,7 +625,17 @@ export class SmartthingsCard extends LitElement {
 
 }
 
+if (!customElements.get('appliance-card')) {
+  customElements.define('appliance-card', class extends SmartthingsCard {});
+}
+
 (window as any).customCards = (window as any).customCards || [];
+(window as any).customCards.push({
+  type: 'appliance-card',
+  name: 'Appliance Card',
+  description: 'A custom card for Home Assistant appliances (SmartThings, LocalThings, etc.)',
+  preview: true,
+});
 (window as any).customCards.push({
   type: 'smartthings-card',
   name: 'Smartthings Card',

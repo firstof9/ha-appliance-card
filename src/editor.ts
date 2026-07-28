@@ -253,3 +253,7 @@ export class SmartthingsCardEditor extends LitElement {
     return newConfig;
   }
 }
+
+if (!customElements.get('appliance-card-editor')) {
+  customElements.define('appliance-card-editor', class extends SmartthingsCardEditor {});
+}
