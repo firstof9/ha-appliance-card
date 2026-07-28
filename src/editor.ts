@@ -256,8 +256,5 @@ export class ApplianceCardEditor extends LitElement {
   }
 }
 
-if (!customElements.get('smartthings-card-editor')) {
-  customElements.define('smartthings-card-editor', class extends ApplianceCardEditor {});
-}
-
-export const SmartthingsCardEditor = ApplianceCardEditor;
+@customElement('smartthings-card-editor')
+export class SmartthingsCardEditor extends ApplianceCardEditor {}

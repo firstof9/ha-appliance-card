@@ -28,6 +28,24 @@ describe('ApplianceCard rendering', () => {
     expect(element.shadowRoot?.querySelector('.container')).toBeNull();
   });
 
+  it('should render the card with legacy smartthings-card custom element and editor', async () => {
+    const legacyElement = document.createElement('smartthings-card') as ApplianceCard;
+    document.body.appendChild(legacyElement);
+    legacyElement.setConfig({
+      type: 'custom:smartthings-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+    });
+    legacyElement.hass = mockHass as HomeAssistant;
+
+    await legacyElement.updateComplete;
+    const card = legacyElement.shadowRoot?.querySelector('ha-card');
+    expect(card).toBeTruthy();
+
+    const editorEl = (legacyElement.constructor as any).getConfigElement();
+    expect(editorEl.tagName.toLowerCase()).toBe('smartthings-card-editor');
+  });
+
   it('should render the card with appliance-card custom element', async () => {
     const applianceElement = document.createElement('appliance-card') as ApplianceCard;
     document.body.appendChild(applianceElement);
