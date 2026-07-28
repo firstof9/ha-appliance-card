@@ -1,8 +1,6 @@
 name: Auto Labeler
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, labeled, unlabeled]
   pull_request_target:
     types: [opened, reopened, synchronize, labeled, unlabeled]
 
@@ -18,8 +16,6 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: release-drafter/release-drafter@eada3c96a64734dd381cfbda23511034e328ddb0 # @v7
-        with:
-          disable-releaser: true
+      - uses: release-drafter/release-drafter/autolabeler@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
