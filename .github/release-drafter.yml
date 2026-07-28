@@ -47,12 +47,12 @@ categories:
     exclusive: true
 
 template: |
-  [![Downloads for this release](https://img.shields.io/github/downloads/firstof9/ha-smartthings-card/$RESOLVED_VERSION/total.svg)](https://github.com/firstof9/ha-smartthings-card/releases/$RESOLVED_VERSION)
+  [![Downloads for this release](https://img.shields.io/github/downloads/firstof9/ha-appliance-card/$RESOLVED_VERSION/total.svg)](https://github.com/firstof9/ha-appliance-card/releases/$RESOLVED_VERSION)
 
   $CHANGES
 
   ## Links
-  - [Submit bugs/feature requests](https://github.com/firstof9/ha-smartthings-card/issues)
+  - [Submit bugs/feature requests](https://github.com/firstof9/ha-appliance-card/issues)
 
 autolabeler:
   - label: "feature"

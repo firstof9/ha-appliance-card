@@ -5,9 +5,8 @@ on:
     branches:
       - main
       - dev
-  pull_request:
-    # Only following types are handled by the action, but one can default to all as well
-    types: [opened, reopened, synchronize]
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
 
 jobs:
   update_release_draft:
@@ -24,3 +23,4 @@ jobs:
       - uses: release-drafter/release-drafter@eada3c96a64734dd381cfbda23511034e328ddb0 # @v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
