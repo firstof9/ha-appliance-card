@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - dev
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
   pull_request_target:
     types: [opened, reopened, synchronize, labeled, unlabeled]
 

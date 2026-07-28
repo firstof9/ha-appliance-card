@@ -55,42 +55,43 @@ template: |
   - [Submit bugs/feature requests](https://github.com/firstof9/ha-appliance-card/issues)
 
 autolabeler:
-  - label: "feature"
+  - label: 'feature'
     title:
-      - "/^feat/i"
-  - label: "bugfix"
+      - '/^feat/i'
+  - label: 'bugfix'
     title:
-      - "/^fix/i"
-  - label: "chore"
+      - '/^fix/i'
+  - label: 'chore'
     title:
-      - "/^chore/i"
-  - label: "ci"
+      - '/^chore/i'
+  - label: 'ci'
     title:
-      - "/^ci/i"
+      - '/^ci/i'
     files:
-      - ".github/**/*"
-  - label: "style"
+      - '.github/**/*'
+  - label: 'style'
     title:
-      - "/^style/i"
+      - '/^style/i'
     files:
-      - "src/styles/**/*"
-  - label: "documentation"
+      - 'src/styles/**/*'
+  - label: 'documentation'
     title:
-      - "/^docs/i"
+      - '/^docs/i'
     files:
-      - "README.md"
-      - "images/**/*"
-      - "screenshots/**/*"
-  - label: "enhancement"
+      - 'README.md'
+      - 'images/**/*'
+      - 'screenshots/**/*'
+  - label: 'enhancement'
     title:
-      - "/^refactor/i"
-  - label: "code-quality"
+      - '/^refactor/i'
+  - label: 'code-quality'
     title:
-      - "/^tests/i"
+      - '/^tests/i'
     files:
-      - "test/**/*"
-  - label: "dependencies"
+      - 'test/**/*'
+  - label: 'dependencies'
     title:
-      - "/^build\\(deps\\)/i"
-      - "/^chore\\(deps\\)/i"
+      - '/^build\(deps\)/i'
+      - '/^chore\(deps\)/i'
+
 
