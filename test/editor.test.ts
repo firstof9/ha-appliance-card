@@ -4,7 +4,7 @@ import { ApplianceCardEditor } from '../src/editor';
 import { mockHass } from './mocks';
 
 describe('ApplianceCardEditor with LocalThings', () => {
-  it('should generate form schema with device selector', () => {
+  it('should generate form schema with smartthings device selector filter', () => {
     const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     editor.setConfig({
       type: 'custom:smartthings-card',
@@ -14,8 +14,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
 
     const schema = (editor as any)._schema();
     const deviceSchema = schema.find((s: any) => s.name === 'device_id');
-    expect(deviceSchema).toBeDefined();
-    expect(deviceSchema.selector.device).toBeDefined();
+    expect(deviceSchema.selector.device.integration).toBe('smartthings');
   });
 
   it('should autofill LocalThings entities based on entity naming conventions', () => {
