@@ -16,6 +16,6 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: release-drafter/release-drafter/autolabeler@v7
+      - uses: release-drafter/release-drafter/autolabeler@eada3c96a64734dd381cfbda23511034e328ddb0 # @v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
