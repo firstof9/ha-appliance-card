@@ -631,18 +631,19 @@ export class ApplianceCard extends LitElement {
 
 }
 
-if (!customElements.get('smartthings-card')) {
-  customElements.define('smartthings-card', class extends ApplianceCard {
-    override connectedCallback() {
-      console.warn(
-        'smartthings-card: <smartthings-card> custom element is deprecated and will be removed in a future release. Please update your dashboard to <appliance-card>.',
-      );
-      super.connectedCallback();
-    }
-  });
-}
+@customElement('smartthings-card')
+export class SmartthingsCard extends ApplianceCard {
+  public static override getConfigElement() {
+    return document.createElement('smartthings-card-editor');
+  }
 
-export const SmartthingsCard = ApplianceCard;
+  override connectedCallback() {
+    console.warn(
+      'smartthings-card: <smartthings-card> custom element is deprecated and will be removed in a future release. Please update your dashboard to <appliance-card>.',
+    );
+    super.connectedCallback();
+  }
+}
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
