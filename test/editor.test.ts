@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import '../src/editor';
-import { SmartthingsCardEditor } from '../src/editor';
+import { ApplianceCardEditor } from '../src/editor';
 import { mockHass } from './mocks';
 
-describe('SmartthingsCardEditor with LocalThings', () => {
+describe('ApplianceCardEditor with LocalThings', () => {
   it('should generate form schema with localthings integration included', () => {
-    const editor = document.createElement('smartthings-card-editor') as SmartthingsCardEditor;
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     editor.setConfig({
       type: 'custom:smartthings-card',
       appliance_type: 'washer',
@@ -19,7 +19,7 @@ describe('SmartthingsCardEditor with LocalThings', () => {
   });
 
   it('should autofill LocalThings entities based on entity naming conventions', () => {
-    const editor = document.createElement('smartthings-card-editor') as SmartthingsCardEditor;
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     const localthingsHass = {
       ...mockHass,
       entities: {
