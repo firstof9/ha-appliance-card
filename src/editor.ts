@@ -14,22 +14,23 @@ export class SmartthingsCardEditor extends LitElement {
 
   private _schema() {
     const deviceId = this._config?.device_id;
+    const integrations = ['smartthings', 'localthings'];
     
     const baseSchema = [
       {
         name: 'device_id',
-        label: 'SmartThings Device',
-        selector: { device: { integration: 'smartthings' } },
+        label: 'Appliance Device',
+        selector: { device: { integration: integrations } },
       },
       {
         name: 'power_entity',
         label: 'Power Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings' } },
+        selector: { entity: { device_id: deviceId, integration: integrations } },
       },
       {
         name: 'machine_state_entity',
         label: 'Machine State Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings' } },
+        selector: { entity: { device_id: deviceId, integration: integrations } },
       },
     ];
 
@@ -37,12 +38,12 @@ export class SmartthingsCardEditor extends LitElement {
       {
         name: 'wifi_entity',
         label: 'WiFi Status Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['binary_sensor', 'switch'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['binary_sensor', 'switch'] } },
       },
       {
         name: 'lock_entity',
         label: 'Child Lock Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['binary_sensor', 'switch'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['binary_sensor', 'switch'] } },
       },
     ];
 
@@ -50,32 +51,32 @@ export class SmartthingsCardEditor extends LitElement {
       {
         name: 'fridge_temp_entity',
         label: 'Fridge Temperature Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['sensor', 'number', 'select'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'number', 'select'] } },
       },
       {
         name: 'freezer_temp_entity',
         label: 'Freezer Temperature Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['sensor', 'number', 'select'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'number', 'select'] } },
       },
       {
         name: 'door_entities',
         label: 'Door Sensors (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: 'binary_sensor', multiple: true } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'binary_sensor', multiple: true } },
       },
       {
         name: 'ice_maker_entity',
         label: 'Ice Maker Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['switch', 'input_boolean'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['switch', 'input_boolean'] } },
       },
       {
         name: 'filter_status_entity',
         label: 'Water Filter Usage Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: 'sensor' } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'sensor' } },
       },
       {
         name: 'filter_reset_entity',
         label: 'Filter Reset Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['button', 'switch', 'input_button'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['button', 'switch', 'input_button'] } },
       },
     ];
 
@@ -83,17 +84,17 @@ export class SmartthingsCardEditor extends LitElement {
       {
         name: 'mode_entity',
         label: 'Mode Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings' } },
+        selector: { entity: { device_id: deviceId, integration: integrations } },
       },
       {
         name: 'job_state_entity',
         label: 'Job State Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings' } },
+        selector: { entity: { device_id: deviceId, integration: integrations } },
       },
       {
         name: 'time_entity',
         label: 'Time Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: 'sensor' } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'sensor' } },
       },
     ];
 
@@ -101,17 +102,17 @@ export class SmartthingsCardEditor extends LitElement {
       {
         name: 'fan_entity',
         label: 'Fan Control Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: ['fan', 'number', 'select'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['fan', 'number', 'select'] } },
       },
       {
         name: 'light_entity',
         label: 'Light Control Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: 'light' } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'light' } },
       },
       {
         name: 'temperature_entity',
         label: 'Temperature Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: 'smartthings', domain: 'sensor' } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'sensor' } },
       },
     ];
 
@@ -227,24 +228,25 @@ export class SmartthingsCardEditor extends LitElement {
       });
     };
 
-    // 3. Autofill logic
-    newConfig.power_entity = newConfig.power_entity || findEntity(['_switch', '_power'], 'switch') || findEntity(['_power'], 'binary_sensor');
-    newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_state']);
-    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state']);
-    newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_time_left'], 'sensor');
-    newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi'], 'binary_sensor');
+    // 3. Autofill logic supporting SmartThings and LocalThings naming conventions
+    newConfig.power_entity = newConfig.power_entity || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
+    newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_state']);
+    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state']);
+    newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left'], 'sensor');
+    newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity'], 'binary_sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock']);
     newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan'], 'fan') || findEntity(['_fan_speed'], 'number');
     newConfig.light_entity = newConfig.light_entity || findEntity(['_light'], 'light');
-    newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_temperature'], 'sensor');
+    newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_temperature', '_target_temperature'], 'sensor');
 
     if (type === 'refrigerator') {
-      newConfig.fridge_temp_entity = newConfig.fridge_temp_entity || findEntity(['_fridge_temp', '_refrigerator_temp']);
-      newConfig.freezer_temp_entity = newConfig.freezer_temp_entity || findEntity(['_freezer_temp']);
-      newConfig.ice_maker_entity = newConfig.ice_maker_entity || findEntity(['_ice_maker']);
+      newConfig.fridge_temp_entity = newConfig.fridge_temp_entity || findEntity(['_fridge_temp', '_refrigerator_temp', '_refrigerator_temperature', '_fridge_target_temperature']);
+      newConfig.freezer_temp_entity = newConfig.freezer_temp_entity || findEntity(['_freezer_temp', '_freezer_temperature', '_freezer_target_temperature']);
+      newConfig.ice_maker_entity = newConfig.ice_maker_entity || findEntity(['_ice_maker', '_ice_maker_status', '_ice_maker_switch']);
+      newConfig.filter_status_entity = newConfig.filter_status_entity || findEntity(['_filter_status', '_water_filter_status', '_filter_usage'], 'sensor');
       newConfig.filter_reset_entity = newConfig.filter_reset_entity || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'button') || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'switch');
       
-      const doors = relevantEntities.filter(id => id.includes('_door') && id.startsWith('binary_sensor.'));
+      const doors = relevantEntities.filter(id => (id.includes('_door') || id.includes('_door_open')) && id.startsWith('binary_sensor.'));
       if (doors.length > 0 && (!newConfig.door_entities || newConfig.door_entities.length === 0)) {
         newConfig.door_entities = doors;
       }
