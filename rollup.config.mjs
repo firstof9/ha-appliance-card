@@ -9,11 +9,18 @@ const dev = process.env.ROLLUP_WATCH === 'true';
 
 export default {
   input: 'src/appliance-card.ts',
-  output: {
-    file: 'appliance-card.js',
-    format: 'es',
-    sourcemap: dev,
-  },
+  output: [
+    {
+      file: 'appliance-card.js',
+      format: 'es',
+      sourcemap: dev,
+    },
+    {
+      file: 'smartthings-card.js',
+      format: 'es',
+      sourcemap: dev,
+    },
+  ],
   plugins: [
     replace({
       preventAssignment: true,
