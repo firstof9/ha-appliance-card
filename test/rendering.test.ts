@@ -1,15 +1,27 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import '../src/smartthings-card';
-import { SmartthingsCard } from '../src/smartthings-card';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import '../src/appliance-card';
+import { ApplianceCard } from '../src/appliance-card';
 import { mockHass } from './mocks';
 import { HomeAssistant } from '../src/types';
 
-describe('SmartthingsCard rendering', () => {
-  let element: SmartthingsCard;
+describe('ApplianceCard rendering', () => {
+  let element: ApplianceCard;
 
   beforeEach(async () => {
-    element = document.createElement('smartthings-card') as SmartthingsCard;
+    element = document.createElement('appliance-card') as ApplianceCard;
     document.body.appendChild(element);
+  });
+
+  it('should log a deprecation warning when using custom:smartthings-card config type', () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    element.setConfig({
+      type: 'custom:smartthings-card',
+      appliance_type: 'microwave',
+    });
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('smartthings-card: "type: custom:smartthings-card" is deprecated'),
+    );
+    consoleWarnSpy.mockRestore();
   });
 
   it('should not render the container if no config', () => {
@@ -17,7 +29,7 @@ describe('SmartthingsCard rendering', () => {
   });
 
   it('should render the card with appliance-card custom element', async () => {
-    const applianceElement = document.createElement('appliance-card') as SmartthingsCard;
+    const applianceElement = document.createElement('appliance-card') as ApplianceCard;
     document.body.appendChild(applianceElement);
     applianceElement.setConfig({
       type: 'custom:appliance-card',

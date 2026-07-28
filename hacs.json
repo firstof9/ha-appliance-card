@@ -1,5 +1,5 @@
 {
-  "name": "Smartthings Card",
+  "name": "Appliance Card",
   "render_readme": true,
-  "filename": "smartthings-card.js"
+  "filename": "appliance-card.js"
 }
