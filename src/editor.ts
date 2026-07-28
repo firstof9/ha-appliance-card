@@ -14,23 +14,22 @@ export class ApplianceCardEditor extends LitElement {
 
   private _schema() {
     const deviceId = this._config?.device_id;
-    const integrations = ['smartthings', 'localthings'];
     
     const baseSchema = [
       {
         name: 'device_id',
         label: 'Appliance Device',
-        selector: { device: { integration: integrations } },
+        selector: { device: {} },
       },
       {
         name: 'power_entity',
         label: 'Power Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId } },
       },
       {
         name: 'machine_state_entity',
         label: 'Machine State Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId } },
       },
     ];
 
@@ -38,12 +37,12 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'wifi_entity',
         label: 'WiFi Status Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['binary_sensor', 'switch'] } },
+        selector: { entity: { device_id: deviceId, domain: ['binary_sensor', 'switch'] } },
       },
       {
         name: 'lock_entity',
         label: 'Child Lock Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['binary_sensor', 'switch'] } },
+        selector: { entity: { device_id: deviceId, domain: ['binary_sensor', 'switch'] } },
       },
     ];
 
@@ -51,32 +50,32 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'fridge_temp_entity',
         label: 'Fridge Temperature Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'number', 'select'] } },
+        selector: { entity: { device_id: deviceId, domain: ['sensor', 'number', 'select'] } },
       },
       {
         name: 'freezer_temp_entity',
         label: 'Freezer Temperature Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'number', 'select'] } },
+        selector: { entity: { device_id: deviceId, domain: ['sensor', 'number', 'select'] } },
       },
       {
         name: 'door_entities',
         label: 'Door Sensors (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'binary_sensor', multiple: true } },
+        selector: { entity: { device_id: deviceId, domain: 'binary_sensor', multiple: true } },
       },
       {
         name: 'ice_maker_entity',
         label: 'Ice Maker Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['switch', 'input_boolean'] } },
+        selector: { entity: { device_id: deviceId, domain: ['switch', 'input_boolean'] } },
       },
       {
         name: 'filter_status_entity',
         label: 'Water Filter Usage Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'sensor' } },
+        selector: { entity: { device_id: deviceId, domain: 'sensor' } },
       },
       {
         name: 'filter_reset_entity',
         label: 'Filter Reset Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['button', 'switch', 'input_button'] } },
+        selector: { entity: { device_id: deviceId, domain: ['button', 'switch', 'input_button'] } },
       },
     ];
 
@@ -84,17 +83,17 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'mode_entity',
         label: 'Mode Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId } },
       },
       {
         name: 'job_state_entity',
         label: 'Job State Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId } },
       },
       {
         name: 'time_entity',
         label: 'Time Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'sensor' } },
+        selector: { entity: { device_id: deviceId, domain: 'sensor' } },
       },
     ];
 
@@ -102,17 +101,17 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'fan_entity',
         label: 'Fan Control Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['fan', 'number', 'select'] } },
+        selector: { entity: { device_id: deviceId, domain: ['fan', 'number', 'select'] } },
       },
       {
         name: 'light_entity',
         label: 'Light Control Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'light' } },
+        selector: { entity: { device_id: deviceId, domain: 'light' } },
       },
       {
         name: 'temperature_entity',
         label: 'Temperature Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'sensor' } },
+        selector: { entity: { device_id: deviceId, domain: 'sensor' } },
       },
     ];
 
