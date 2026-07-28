@@ -8,13 +8,13 @@ import { version } from '../package.json';
 
 /* eslint no-console: 0 */
 console.info(
-  `%c SMARTTHINGS-CARD %c v${version} `,
+  `%c APPLIANCE-CARD %c v${version} `,
   'color: white; background: #008cc0; font-weight: 700;',
   'color: #008cc0; background: white; font-weight: 700;',
 );
 
-@customElement('smartthings-card')
-export class SmartthingsCard extends LitElement {
+@customElement('appliance-card')
+export class ApplianceCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @state() private config!: SmartthingsCardConfig;
@@ -22,7 +22,7 @@ export class SmartthingsCard extends LitElement {
   private _timer?: number;
 
   public static getConfigElement() {
-    return document.createElement('smartthings-card-editor');
+    return document.createElement('appliance-card-editor');
   }
 
   public static getStubConfig() {
@@ -59,7 +59,16 @@ export class SmartthingsCard extends LitElement {
       throw new Error('Invalid configuration');
     }
 
+    if (config.type === 'custom:smartthings-card') {
+      console.warn(
+        'smartthings-card: "type: custom:smartthings-card" is deprecated and will be removed in a future release. Please update your card configuration to "type: custom:appliance-card".',
+      );
+    }
+
     this.config = { ...config };
+    if (!this.config.type) {
+      this.config.type = 'custom:appliance-card';
+    }
     if (!this.config.appliance_type) {
       this.config.appliance_type = 'microwave';
     }
@@ -622,7 +631,26 @@ export class SmartthingsCard extends LitElement {
 
 }
 
+if (!customElements.get('smartthings-card')) {
+  customElements.define('smartthings-card', class extends ApplianceCard {
+    override connectedCallback() {
+      console.warn(
+        'smartthings-card: <smartthings-card> custom element is deprecated and will be removed in a future release. Please update your dashboard to <appliance-card>.',
+      );
+      super.connectedCallback();
+    }
+  });
+}
+
+export const SmartthingsCard = ApplianceCard;
+
 (window as any).customCards = (window as any).customCards || [];
+(window as any).customCards.push({
+  type: 'appliance-card',
+  name: 'Appliance Card',
+  description: 'A custom card for Home Assistant appliances (SmartThings, LocalThings, etc.)',
+  preview: true,
+});
 (window as any).customCards.push({
   type: 'smartthings-card',
   name: 'Smartthings Card',

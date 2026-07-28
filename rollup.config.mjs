@@ -8,9 +8,9 @@ import replace from '@rollup/plugin-replace';
 const dev = process.env.ROLLUP_WATCH === 'true';
 
 export default {
-  input: 'src/smartthings-card.ts',
+  input: 'src/appliance-card.ts',
   output: {
-    file: 'smartthings-card.js',
+    file: 'appliance-card.js',
     format: 'es',
     sourcemap: dev,
   },

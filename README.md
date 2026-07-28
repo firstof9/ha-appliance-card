@@ -1,10 +1,13 @@
-# Smartthings Card
+# Appliance Card
 
-A custom Home Assistant card for Smartthings devices.
+A custom Home Assistant card for tracking and controlling home appliances (SmartThings, LocalThings, etc.).
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=firstof9&repository=ha-smartthings-card&category=plugin)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=firstof9&repository=ha-appliance-card&category=plugin)
 
-![Preview](https://raw.githubusercontent.com/firstof9/ha-smartthings-card/main/screenshots/smartthings_card.gif)
+![Preview](https://raw.githubusercontent.com/firstof9/ha-appliance-card/main/screenshots/smartthings_card.gif)
+
+> [!NOTE]
+> `ha-smartthings-card` has been renamed to **`ha-appliance-card`**. The element `custom:smartthings-card` is deprecated and will be removed in a future release. Please update your card configuration to `type: custom:appliance-card`.
 
 ## Installation
 
@@ -13,23 +16,24 @@ A custom Home Assistant card for Smartthings devices.
 1. Click the badge above or:
 2. Go to HACS -> Frontend
 3. Click on the three dots in the top right corner and select "Custom repositories"
-4. Add `https://github.com/firstof9/ha-smartthings-card` as a "Lovelace" repository
+4. Add `https://github.com/firstof9/ha-appliance-card` as a "Lovelace" repository
 5. Click "Install"
 
 ### Manual
 
-1. Download `smartthings-card.js` from the [latest release](https://github.com/firstof9/ha-smartthings-card/releases/latest) and copy it to your `<config>/www/` directory.
+1. Download `appliance-card.js` from the [latest release](https://github.com/firstof9/ha-appliance-card/releases/latest) and copy it to your `<config>/www/` directory.
 2. Add the following to your `configuration.yaml` or through the UI resources:
 
 ```yaml
 lovelace:
   resources:
-    - url: /local/smartthings-card.js
+    - url: /local/appliance-card.js
       type: module
 ```
 
 ## Features
 
+- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, and more.
 - **Modern Glassmorphic UI**: Sleek, transparent design elements with vibrant accents.
 - **7-Segment Digital Readouts**: Authentic digital display for timers and temperatures with grey "88" placeholders.
 - **Responsive Layout**: Fully supports the new Home Assistant **Sections** dashboard with dynamic resizing.
@@ -39,14 +43,14 @@ lovelace:
 
 ## Configuration
 
-This card supports a fully featured Visual Editor in the Home Assistant UI. Simply add the card, select your SmartThings device, and the editor will automatically discover and populate the relevant entities.
+This card supports a fully featured Visual Editor in the Home Assistant UI. Simply add the card, select your appliance device (SmartThings or LocalThings), and the editor will automatically discover and populate the relevant entities.
 
 For manual YAML configuration:
 
 | Name | Type | Requirement | Description |
 | --- | --- | --- | --- |
-| `type` | string | **Required** | `custom:smartthings-card` |
-| `device_id` | string | **Required** | The SmartThings device ID. |
+| `type` | string | **Required** | `custom:appliance-card` (deprecated: `custom:smartthings-card`) |
+| `device_id` | string | **Required** | The Home Assistant device ID. |
 | `appliance_type` | string | **Optional** | `microwave`, `oven`, `dishwasher`, `washer`, `dryer`, `refrigerator`. Defaults to `microwave`. |
 | `power_entity` | string | **Optional** | The entity ID for power state (switch or binary_sensor). |
 | `mode_entity` | string | **Optional** | The entity ID for the current appliance mode. |

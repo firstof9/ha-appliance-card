@@ -2,8 +2,8 @@ import { LitElement, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, SmartthingsCardConfig } from './types';
 
-@customElement('smartthings-card-editor')
-export class SmartthingsCardEditor extends LitElement {
+@customElement('appliance-card-editor')
+export class ApplianceCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: SmartthingsCardConfig;
@@ -255,3 +255,9 @@ export class SmartthingsCardEditor extends LitElement {
     return newConfig;
   }
 }
+
+if (!customElements.get('smartthings-card-editor')) {
+  customElements.define('smartthings-card-editor', class extends ApplianceCardEditor {});
+}
+
+export const SmartthingsCardEditor = ApplianceCardEditor;
