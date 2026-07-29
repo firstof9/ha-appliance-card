@@ -72,4 +72,26 @@ describe('ApplianceCardEditor with LocalThings', () => {
 
     expect(autofilled.time_entity).toBe('sensor.samsung_dishwasher_da_dw_a51_20_common_estimated_finish');
   });
+
+  it('should autofill LocalThings progress job state entity', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const localthingsHass = {
+      ...mockHass,
+      entities: {
+        'sensor.samsung_dryer_da_wm_a51_20_common_progress': { device_id: 'dev_local_dryer' },
+      },
+      states: {
+        'sensor.samsung_dryer_da_wm_a51_20_common_progress': { state: 'drying', attributes: { friendly_name: 'Progress' } },
+      },
+    };
+    editor.hass = localthingsHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:smartthings-card',
+      device_id: 'dev_local_dryer',
+      appliance_type: 'dryer',
+    });
+
+    expect(autofilled.job_state_entity).toBe('sensor.samsung_dryer_da_wm_a51_20_common_progress');
+  });
 });
