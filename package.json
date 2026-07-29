@@ -8,6 +8,9 @@
     "custom-card",
     "smartthings",
     "localthings",
+    "smartthinq_sensors",
+    "lg_thinq",
+    "thinq",
     "appliances",
     "dashboard"
   ],
