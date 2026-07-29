@@ -17,6 +17,8 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(deviceSchema.selector.device.filter).toEqual([
       { integration: 'smartthings' },
       { integration: 'localthings' },
+      { integration: 'smartthinq_sensors' },
+      { integration: 'lg_thinq' },
     ]);
   });
 
@@ -49,6 +51,74 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.machine_state_entity).toBe('sensor.washer_operation_state');
     expect(autofilled.job_state_entity).toBe('sensor.washer_running_state');
     expect(autofilled.time_entity).toBe('sensor.washer_remaining_time');
+  });
+
+  it('should autofill SmartThinQ Sensors entities', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const lgHass = {
+      ...mockHass,
+      entities: {
+        'switch.washer_power': { device_id: 'dev_lg_st' },
+        'sensor.washer_run_state': { device_id: 'dev_lg_st' },
+        'sensor.washer_pre_state': { device_id: 'dev_lg_st' },
+        'sensor.washer_remaining_time': { device_id: 'dev_lg_st' },
+        'binary_sensor.washer_child_lock': { device_id: 'dev_lg_st' },
+        'sensor.washer_ssid': { device_id: 'dev_lg_st' },
+      },
+      states: {
+        'switch.washer_power': { state: 'on', attributes: { friendly_name: 'Washer Power' } },
+        'sensor.washer_run_state': { state: 'RUNNING', attributes: { friendly_name: 'Washer Run State' } },
+        'sensor.washer_pre_state': { state: 'WASH', attributes: { friendly_name: 'Washer Pre State' } },
+        'sensor.washer_remaining_time': { state: '00:30:00', attributes: { friendly_name: 'Washer Remaining Time' } },
+        'binary_sensor.washer_child_lock': { state: 'off', attributes: { friendly_name: 'Washer Child Lock' } },
+        'sensor.washer_ssid': { state: 'HomeWiFi', attributes: { friendly_name: 'Washer SSID' } },
+      },
+    };
+    editor.hass = lgHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:smartthings-card',
+      device_id: 'dev_lg_st',
+      appliance_type: 'washer',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.washer_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.washer_run_state');
+    expect(autofilled.job_state_entity).toBe('sensor.washer_pre_state');
+    expect(autofilled.time_entity).toBe('sensor.washer_remaining_time');
+    expect(autofilled.lock_entity).toBe('binary_sensor.washer_child_lock');
+    expect(autofilled.wifi_entity).toBe('sensor.washer_ssid');
+  });
+
+  it('should autofill LG ThinQ entities with trailing numeric suffixes (e.g. _2)', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const lgThinqHass = {
+      ...mockHass,
+      entities: {
+        'switch.washer_power_2': { device_id: 'dev_lg_thinq' },
+        'sensor.washer_current_status': { device_id: 'dev_lg_thinq' },
+        'sensor.washer_remaining_time_2': { device_id: 'dev_lg_thinq' },
+        'binary_sensor.washer_remote_start_2': { device_id: 'dev_lg_thinq' },
+      },
+      states: {
+        'switch.washer_power_2': { state: 'on', attributes: { friendly_name: 'Washer Power' } },
+        'sensor.washer_current_status': { state: 'washing', attributes: { friendly_name: 'Washer Current Status' } },
+        'sensor.washer_remaining_time_2': { state: '00:15:00', attributes: { friendly_name: 'Washer Remaining Time' } },
+        'binary_sensor.washer_remote_start_2': { state: 'on', attributes: { friendly_name: 'Washer Remote Start' } },
+      },
+    };
+    editor.hass = lgThinqHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:smartthings-card',
+      device_id: 'dev_lg_thinq',
+      appliance_type: 'washer',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.washer_power_2');
+    expect(autofilled.machine_state_entity).toBe('sensor.washer_current_status');
+    expect(autofilled.time_entity).toBe('sensor.washer_remaining_time_2');
+    expect(autofilled.lock_entity).toBe('binary_sensor.washer_remote_start_2');
   });
 
   it('should autofill LocalThings estimated finish time entity', () => {
