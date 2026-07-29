@@ -235,7 +235,7 @@ export class ApplianceCardEditor extends LitElement {
     // 3. Autofill logic supporting SmartThings and LocalThings naming conventions
     newConfig.power_entity = newConfig.power_entity || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
     newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_state']);
-    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_progress']);
+    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_progress', '_cooking_mode']);
     newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity'], 'binary_sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock']);

@@ -94,4 +94,26 @@ describe('ApplianceCardEditor with LocalThings', () => {
 
     expect(autofilled.job_state_entity).toBe('sensor.samsung_dryer_da_wm_a51_20_common_progress');
   });
+
+  it('should autofill LocalThings cooking_mode job state entity for microwave/oven', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const localthingsHass = {
+      ...mockHass,
+      entities: {
+        'select.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_cooking_mode': { device_id: 'dev_local_mw' },
+      },
+      states: {
+        'select.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_cooking_mode': { state: 'microwave', attributes: { friendly_name: 'Cooking Mode' } },
+      },
+    };
+    editor.hass = localthingsHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:smartthings-card',
+      device_id: 'dev_local_mw',
+      appliance_type: 'microwave',
+    });
+
+    expect(autofilled.job_state_entity).toBe('select.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_cooking_mode');
+  });
 });

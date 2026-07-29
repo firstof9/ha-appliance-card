@@ -10,7 +10,7 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 ## Suffix Matchers
 - **Power**: `['_switch', '_power', '_power_switch']` (switch) or `['_power', '_state']` (binary_sensor).
 - **Machine State**: `['_machine_state', '_operation_state', '_appliance_state', '_state']`.
-- **Job State**: `['_job_state', '_running_state', '_cycle_state', '_progress']`.
+- **Job State**: `['_job_state', '_running_state', '_cycle_state', '_progress', '_cooking_mode']`.
 - **Time Remaining**: `['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish']` (sensor).
 - **WiFi Status**: `['_wifi', '_connectivity']` (binary_sensor).
 - **Child Lock**: `['_lock', '_child_lock']`.
