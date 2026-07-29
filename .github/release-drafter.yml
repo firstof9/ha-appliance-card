@@ -55,59 +55,43 @@ template: |
   - [Submit bugs/feature requests](https://github.com/firstof9/ha-appliance-card/issues)
 
 autolabeler:
-  - label: 'feature'
+  - label: "feature"
     title:
-      - '^feat'
-      - '^feat:'
-      - '^feat\('
-  - label: 'bugfix'
+      - "/^feat/i"
+  - label: "bugfix"
     title:
-      - '^fix'
-      - '^fix:'
-      - '^fix\('
-  - label: 'chore'
+      - "/^fix/i"
+  - label: "chore"
     title:
-      - '^chore'
-      - '^chore:'
-      - '^chore\('
-  - label: 'ci'
+      - "/^chore/i"
+  - label: "ci"
     title:
-      - '^ci'
-      - '^ci:'
-      - '^ci\('
+      - "/^ci/i"
     files:
-      - '.github/**/*'
-  - label: 'style'
+      - ".github/**/*"
+  - label: "style"
     title:
-      - '^style'
-      - '^style:'
-      - '^style\('
+      - "/^style/i"
     files:
-      - 'src/styles/**/*'
-  - label: 'documentation'
+      - "src/styles/**/*"
+  - label: "documentation"
     title:
-      - '^docs'
-      - '^docs:'
-      - '^docs\('
+      - "/^docs/i"
     files:
-      - 'README.md'
-      - 'images/**/*'
-      - 'screenshots/**/*'
-  - label: 'enhancement'
+      - "README.md"
+      - "images/**/*"
+      - "screenshots/**/*"
+  - label: "enhancement"
     title:
-      - '^refactor'
-      - '^refactor:'
-      - '^refactor\('
-  - label: 'code-quality'
+      - "/^refactor/i"
+  - label: "code-quality"
     title:
-      - '^tests'
-      - '^test'
-      - '^test:'
+      - "/^tests/i"
     files:
-      - 'test/**/*'
-  - label: 'dependencies'
+      - "test/**/*"
+  - label: "dependencies"
     title:
-      - '^build\(deps\)'
-      - '^chore\(deps\)'
+      - "/^build\\(deps\\)/i"
+      - "/^chore\\(deps\\)/i"
 
 

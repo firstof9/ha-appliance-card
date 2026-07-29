@@ -12,7 +12,7 @@ Guidelines for repository GitHub Actions workflows and automated release process
    - Pin third-party GitHub Actions to 40-character commit SHAs with version comments (e.g. `uses: actions/checkout@3d3c42e5... # v7.0.1`).
 2. **Auto Labeler**:
    - Keep dedicated `.github/workflows/autolabeler.yaml` using `release-drafter/release-drafter/autolabeler@eada3c... # @v7`.
-   - Autolabeler regex patterns in `.github/release-drafter.yml` must use plain strings without `/.../i` wrappers (e.g., `'^ci'`, `'^feat'`, `'^fix'`).
+   - Autolabeler regex patterns in `.github/release-drafter.yml` follow gasbuddy-card format with `/^pattern/i` (e.g., `"(/^feat/i"`).
 3. **HACS Action**:
    - Workflow `.github/workflows/hacs.yml` must trigger on `push` to `main`.
    - Run `npm ci` and `npm run build` before `hacs/action` so generated JS assets exist in workspace root during validation.
