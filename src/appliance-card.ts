@@ -222,20 +222,53 @@ export class ApplianceCard extends LitElement {
               `
             : ''}
           ${fanStateObj
-            ? html`
-                <div class="fan-control ${fanStateObj.state !== '0' && fanStateObj.state !== 'off' ? 'on' : ''}">
-                  <ha-icon icon="mdi:fan"></ha-icon>
-                  <input
-                    type="range"
-                    class="fan-slider"
-                    min="0"
-                    max=${fanStateObj.attributes.maximum ?? 2}
-                    step="1"
-                    .value=${fanStateObj.state}
-                    @change=${this._handleFanSpeed}
-                  />
-                </div>
-              `
+            ? (() => {
+                const domain = this.config.fan_entity!.split('.')[0];
+                let isOff = fanStateObj.state === 'off' || fanStateObj.state === '0' || fanStateObj.state === 'OFF';
+                let min = 0;
+                let max = 100;
+                let step = 1;
+                let value = 0;
+
+                if (domain === 'fan') {
+                  const percentage = fanStateObj.attributes?.percentage;
+                  value = percentage !== undefined && percentage !== null ? Number(percentage) : (isOff ? 0 : 100);
+                  const pctStep = Number(fanStateObj.attributes?.percentage_step);
+                  step = pctStep && pctStep > 0 ? pctStep : 1;
+                } else if (domain === 'select') {
+                  const options: string[] = (fanStateObj.attributes?.options as string[]) || [];
+                  max = Math.max(0, options.length - 1);
+                  const currentIndex = options.indexOf(fanStateObj.state);
+                  value = currentIndex >= 0 ? currentIndex : 0;
+                  isOff = value === 0 || fanStateObj.state.toLowerCase() === 'off';
+                } else if (domain === 'number') {
+                  min = Number(fanStateObj.attributes.min ?? 0);
+                  max = Number(fanStateObj.attributes.max ?? fanStateObj.attributes.maximum ?? 3);
+                  step = Number(fanStateObj.attributes.step ?? 1);
+                  value = Number(fanStateObj.state) || 0;
+                  isOff = value === min;
+                } else {
+                  min = 0;
+                  max = Number(fanStateObj.attributes.maximum ?? 3);
+                  value = Number(fanStateObj.state) || 0;
+                  isOff = value === 0 || fanStateObj.state === 'off';
+                }
+
+                return html`
+                  <div class="fan-control ${!isOff ? 'on' : ''}">
+                    <ha-icon icon="mdi:fan"></ha-icon>
+                    <input
+                      type="range"
+                      class="fan-slider"
+                      min="${min}"
+                      max="${max}"
+                      step="${step}"
+                      .value=${value}
+                      @change=${(e: Event) => this._handleFanSpeed(e, fanStateObj)}
+                    />
+                  </div>
+                `;
+              })()
             : ''}
         </div>
       </div>
@@ -250,21 +283,31 @@ export class ApplianceCard extends LitElement {
     });
   }
 
-  private _handleFanSpeed(ev: Event): void {
-    const value = (ev.target as HTMLInputElement).value;
+  private _handleFanSpeed(ev: Event, fanStateObj: any): void {
+    const rawValue = (ev.target as HTMLInputElement).value;
+    const numValue = Number(rawValue);
     if (!this.hass || !this.config.fan_entity) return;
-    
-    const domain = this.config.fan_entity.split('.')[0];
-    const service = domain === 'number' ? 'set_value' : 'set_percentage';
-    const data: Record<string, any> = { entity_id: this.config.fan_entity };
-    
-    if (domain === 'number') {
-      data.value = value;
-    } else {
-      data.percentage = parseInt(value, 10);
-    }
 
-    this.hass.callService(domain, service, data);
+    const domain = this.config.fan_entity.split('.')[0];
+    const data: Record<string, any> = { entity_id: this.config.fan_entity };
+
+    if (domain === 'fan') {
+      if (numValue === 0) {
+        this.hass.callService('fan', 'turn_off', data);
+      } else {
+        this.hass.callService('fan', 'set_percentage', { ...data, percentage: numValue });
+      }
+    } else if (domain === 'select') {
+      const options: string[] = fanStateObj?.attributes?.options || [];
+      const selectedOption = options[numValue];
+      if (selectedOption) {
+        this.hass.callService('select', 'select_option', { ...data, option: selectedOption });
+      }
+    } else if (domain === 'number') {
+      this.hass.callService('number', 'set_value', { ...data, value: numValue });
+    } else {
+      this.hass.callService(domain, 'set_percentage', { ...data, percentage: numValue });
+    }
   }
 
   private _renderJobStates(activeMode: string): TemplateResult | void {
