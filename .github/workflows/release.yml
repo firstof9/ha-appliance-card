@@ -29,6 +29,11 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci
+      - name: Update package.json version
+        run: |
+          TAG_NAME="${{ github.event.inputs.tag || github.event.release.tag_name }}"
+          VERSION="${TAG_NAME#v}"
+          npm version "$VERSION" --no-git-tag-version
       - run: npm run build
       - name: Upload card bundle
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
