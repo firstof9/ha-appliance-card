@@ -165,15 +165,19 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.job_state_entity).toBe('sensor.samsung_dryer_da_wm_a51_20_common_progress');
   });
 
-  it('should autofill LocalThings cooking_mode job state entity for microwave/oven', () => {
+  it('should autofill LocalThings cooking_mode job state, fan, and light entities for microwave/oven', () => {
     const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     const localthingsHass = {
       ...mockHass,
       entities: {
         'select.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_cooking_mode': { device_id: 'dev_local_mw' },
+        'fan.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000': { device_id: 'dev_local_mw' },
+        'switch.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_lamp': { device_id: 'dev_local_mw' },
       },
       states: {
         'select.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_cooking_mode': { state: 'microwave', attributes: { friendly_name: 'Cooking Mode' } },
+        'fan.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000': { state: 'off', attributes: { friendly_name: 'Microwave Fan' } },
+        'switch.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_lamp': { state: 'off', attributes: { friendly_name: 'Microwave Lamp' } },
       },
     };
     editor.hass = localthingsHass as any;
@@ -185,5 +189,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
     });
 
     expect(autofilled.job_state_entity).toBe('select.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_cooking_mode');
+    expect(autofilled.fan_entity).toBe('fan.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000');
+    expect(autofilled.light_entity).toBe('switch.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_lamp');
   });
 });
