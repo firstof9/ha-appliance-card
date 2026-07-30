@@ -15,6 +15,8 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 - **Time Remaining**: `['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time']` (sensor).
 - **WiFi Status**: `['_wifi', '_connectivity', '_ssid']`.
 - **Child Lock**: `['_lock', '_child_lock', '_door_lock', '_remote_start']`.
+- **Fan**: `fan` domain (any entity ID) or `['_fan', '_fan_speed']` (number).
+- **Light**: `light` domain or `['_light', '_lamp']` (switch).
 - **Appliance-Specific**:
   - Refrigerator: `_fridge_temp`, `_freezer_temp`, `_ice_maker_status`, `_water_filter_status`, `_door_open`.
 

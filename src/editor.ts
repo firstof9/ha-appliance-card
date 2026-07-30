@@ -111,7 +111,7 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'light_entity',
         label: 'Light Control Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: 'light' } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['light', 'switch'] } },
       },
       {
         name: 'temperature_entity',
@@ -239,8 +239,8 @@ export class ApplianceCardEditor extends LitElement {
     newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity', '_ssid'], 'binary_sensor') || findEntity(['_ssid'], 'sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock', '_door_lock', '_remote_start']);
-    newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan'], 'fan') || findEntity(['_fan_speed'], 'number');
-    newConfig.light_entity = newConfig.light_entity || findEntity(['_light'], 'light');
+    newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan', '_fan_speed', ''], 'fan') || findEntity(['_fan_speed'], 'number');
+    newConfig.light_entity = newConfig.light_entity || findEntity(['_light', '_lamp', ''], 'light') || findEntity(['_light', '_lamp'], 'switch');
     newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_temperature', '_target_temperature'], 'sensor');
 
     if (type === 'refrigerator') {
