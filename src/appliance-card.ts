@@ -1,4 +1,5 @@
 import { LitElement, html, TemplateResult, PropertyValues } from 'lit';
+import { live } from 'lit/directives/live.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, SmartthingsCardConfig } from './types';
 import { styles } from './styles/styles';
@@ -263,7 +264,8 @@ export class ApplianceCard extends LitElement {
                       min="${min}"
                       max="${max}"
                       step="${step}"
-                      .value=${value}
+                      .value=${live(value)}
+                      @input=${(e: Event) => this._handleFanSpeed(e, fanStateObj)}
                       @change=${(e: Event) => this._handleFanSpeed(e, fanStateObj)}
                     />
                   </div>
