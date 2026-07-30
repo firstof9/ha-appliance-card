@@ -17,14 +17,25 @@ export class ApplianceCardEditor extends LitElement {
     const integrations = ['smartthings', 'localthings', 'smartthinq_sensors', 'lg_thinq'];
 
     const getEntitySelector = (domain?: string | string[], multiple?: boolean) => {
-      const filter: Record<string, any> = {};
-      if (deviceId) {
-        filter.device_id = deviceId;
-      }
+      const entitySelectorConfig: Record<string, any> = {};
       if (domain) {
-        filter.domain = domain;
+        entitySelectorConfig.filter = { domain };
       }
-      return { entity: { filter, ...(multiple ? { multiple: true } : {}) } };
+      if (multiple) {
+        entitySelectorConfig.multiple = true;
+      }
+
+      if (deviceId && this.hass) {
+        const entities = Object.keys(this.hass.states || {});
+        const deviceEntities = entities.filter(
+          (id) => (this.hass as any).entities?.[id]?.device_id === deviceId
+        );
+        if (deviceEntities.length > 0) {
+          entitySelectorConfig.include_entities = deviceEntities;
+        }
+      }
+
+      return { entity: entitySelectorConfig };
     };
 
     const baseSchema = [
