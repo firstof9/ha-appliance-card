@@ -1,50 +1,98 @@
-name-template: "$RESOLVED_VERSION"
-tag-template: "$RESOLVED_VERSION"
-change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+name-template: '$RESOLVED_VERSION'
+tag-template: '$RESOLVED_VERSION'
+version-template: '$MAJOR.$MINOR.$PATCH'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 sort-direction: ascending
+
 categories:
-  - title: "💥 Breaking Change 💥"
+  - title: '✨ Enhancements'
     labels:
-      - "breaking-change"
-    exclusive: true
-  - title: "⚡ Enhancements ⚡"
+      - 'enhancement'
+  - title: '🚀 Features'
     labels:
-      - "enhancement"
-    exclusive: true
-  - title: "✨ New Features ✨"
+      - 'feature'
+      - 'feat'
+  - title: '🐛 Bug Fixes'
     labels:
-      - "feature"
-    exclusive: true
-  - title: "🐛 Bug Fixes 🐛"
+      - 'fix'
+      - 'bug'
+  - title: '⚡ Performance'
     labels:
-      - "fix"
-      - "bugfix"
-      - "bug"
-    exclusive: true
-  - title: "🎨 Styling 🎨"
-    labels:
-      - "style"
-    exclusive: true    
-  - title: "🔩 Dependency 🔩"
-    labels:
-      - "dependencies"
+      - 'performance'
+  - title: '📖 Documentation'
     collapse-after: 1
-    exclusive: true
-  - title: "🔧 Maintenance 🔧"
     labels:
-      - "chore"
-      - "ci"
+      - 'docs'
+      - 'documentation'
+  - title: '🧰 Maintenance'
     collapse-after: 1
-    exclusive: true
-  - title: "🎓 Code Quality 🎓"
     labels:
-      - "code-quality"
-    exclusive: true
-  - title: "📝 Documentation 📝"
-    labels:
-      - "documentation"
+      - 'chore'
+      - 'refactor'
+      - 'ci'
+  - title: '📦 Dependencies'
     collapse-after: 1
-    exclusive: true
+    labels:
+      - 'dependencies'
+
+# Auto-apply labels based on PR title (conventional commits) so the
+# categories above actually populate without anyone touching labels by
+# hand. Conventional-commit titles are already enforced by lint-pr-title.
+autolabeler:
+  - label: 'feature'
+    title:
+      - '/^feat(\(.+\))?:/i'
+  - label: 'fix'
+    title:
+      - '/^fix(\(.+\))?:/i'
+  - label: 'documentation'
+    title:
+      - '/^docs(\(.+\))?:/i'
+  - label: 'chore'
+    title:
+      - '/^chore(\(.+\))?:/i'
+  - label: 'refactor'
+    title:
+      - '/^refactor(\(.+\))?:/i'
+  - label: 'ci'
+    title:
+      - '/^ci(\(.+\))?:/i'
+      - '/^build(\(.+\))?:/i'
+  - label: 'performance'
+    title:
+      - '/^perf(\(.+\))?:/i'
+  - label: 'chore'
+    title:
+      - '/^style(\(.+\))?:/i'
+      - '/^test(\(.+\))?:/i'
+  - label: 'dependencies'
+    title:
+      - '/^build\(deps\)(\(.+\))?:/i'
+      - '/^deps(\(.+\))?:/i'
+
+version-resolver:
+  major:
+    labels:
+      - 'breaking-change'
+      - 'breaking change'
+  minor:
+    labels:
+      - 'feature'
+      - 'enhancement'
+  patch:
+    labels:
+      - 'bug'
+      - 'fix'
+      - 'performance'
+      - 'refactor'
+      - 'style'
+      - 'build'
+      - 'chore'
+      - 'documentation'
+      - 'ci'
+      - 'test'
+      - 'dependencies'
+  default: patch
 
 template: |
   [![Downloads for this release](https://img.shields.io/github/downloads/firstof9/ha-appliance-card/$RESOLVED_VERSION/total.svg)](https://github.com/firstof9/ha-appliance-card/releases/$RESOLVED_VERSION)
@@ -53,45 +101,3 @@ template: |
 
   ## Links
   - [Submit bugs/feature requests](https://github.com/firstof9/ha-appliance-card/issues)
-
-autolabeler:
-  - label: "feature"
-    title:
-      - "/^feat/i"
-  - label: "bugfix"
-    title:
-      - "/^fix/i"
-  - label: "chore"
-    title:
-      - "/^chore/i"
-  - label: "ci"
-    title:
-      - "/^ci/i"
-    files:
-      - ".github/**/*"
-  - label: "style"
-    title:
-      - "/^style/i"
-    files:
-      - "src/styles/**/*"
-  - label: "documentation"
-    title:
-      - "/^docs/i"
-    files:
-      - "README.md"
-      - "images/**/*"
-      - "screenshots/**/*"
-  - label: "enhancement"
-    title:
-      - "/^refactor/i"
-  - label: "code-quality"
-    title:
-      - "/^tests/i"
-    files:
-      - "test/**/*"
-  - label: "dependencies"
-    title:
-      - "/^build\\(deps\\)/i"
-      - "/^chore\\(deps\\)/i"
-
-
