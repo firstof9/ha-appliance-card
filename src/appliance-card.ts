@@ -1,4 +1,5 @@
 import { LitElement, html, TemplateResult, PropertyValues } from 'lit';
+import { live } from 'lit/directives/live.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, SmartthingsCardConfig } from './types';
 import { styles } from './styles/styles';
@@ -231,10 +232,21 @@ export class ApplianceCard extends LitElement {
                 let value = 0;
 
                 if (domain === 'fan') {
-                  const percentage = fanStateObj.attributes?.percentage;
-                  value = percentage !== undefined && percentage !== null ? Number(percentage) : (isOff ? 0 : 100);
                   const pctStep = Number(fanStateObj.attributes?.percentage_step);
-                  step = pctStep && pctStep > 0 ? pctStep : 1;
+                  const percentage = fanStateObj.attributes?.percentage;
+                  if (pctStep && pctStep > 0) {
+                    min = 0;
+                    max = Math.round(100 / pctStep);
+                    step = 1;
+                    const pctVal = percentage !== undefined && percentage !== null ? Number(percentage) : (isOff ? 0 : 100);
+                    value = Math.round(pctVal / pctStep);
+                  } else {
+                    min = 0;
+                    max = 100;
+                    step = 1;
+                    value = percentage !== undefined && percentage !== null ? Number(percentage) : (isOff ? 0 : 100);
+                  }
+                  isOff = value === 0 || fanStateObj.state === 'off';
                 } else if (domain === 'select') {
                   const options: string[] = (fanStateObj.attributes?.options as string[]) || [];
                   max = Math.max(0, options.length - 1);
@@ -263,7 +275,7 @@ export class ApplianceCard extends LitElement {
                       min="${min}"
                       max="${max}"
                       step="${step}"
-                      .value=${value}
+                      .value=${live(value)}
                       @change=${(e: Event) => this._handleFanSpeed(e, fanStateObj)}
                     />
                   </div>
@@ -292,10 +304,22 @@ export class ApplianceCard extends LitElement {
     const data: Record<string, any> = { entity_id: this.config.fan_entity };
 
     if (domain === 'fan') {
-      if (numValue === 0) {
+      const pctStep = Number(fanStateObj?.attributes?.percentage_step);
+      let targetPercentage = numValue;
+
+      if (pctStep && pctStep > 0) {
+        const maxStep = Math.round(100 / pctStep);
+        if (numValue >= maxStep) {
+          targetPercentage = 100;
+        } else {
+          targetPercentage = Math.round(numValue * pctStep);
+        }
+      }
+
+      if (numValue === 0 || targetPercentage === 0) {
         this.hass.callService('fan', 'turn_off', data);
       } else {
-        this.hass.callService('fan', 'set_percentage', { ...data, percentage: numValue });
+        this.hass.callService('fan', 'set_percentage', { ...data, percentage: targetPercentage });
       }
     } else if (domain === 'select') {
       const options: string[] = fanStateObj?.attributes?.options || [];
