@@ -4,13 +4,22 @@ import { ApplianceCardEditor } from '../src/editor';
 import { mockHass } from './mocks';
 
 describe('ApplianceCardEditor with LocalThings', () => {
-  it('should generate form schema with device selector filter array', () => {
+  it('should generate form schema with device selector filter array and entity selector device_id filter', () => {
     const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     editor.setConfig({
       type: 'custom:smartthings-card',
+      device_id: 'dev_123',
       appliance_type: 'washer',
     });
-    editor.hass = mockHass as any;
+    editor.hass = {
+      ...mockHass,
+      entities: {
+        'switch.washer_power': { device_id: 'dev_123' },
+      },
+      states: {
+        'switch.washer_power': { state: 'on', attributes: {} },
+      },
+    } as any;
 
     const schema = (editor as any)._schema();
     const deviceSchema = schema.find((s: any) => s.name === 'device_id');
@@ -20,6 +29,12 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'smartthinq_sensors' },
       { integration: 'lg_thinq' },
     ]);
+
+    const powerSchema = schema.find((s: any) => s.name === 'power_entity');
+    expect(powerSchema.selector.entity).toEqual({
+      filter: { domain: ['switch', 'binary_sensor'] },
+      include_entities: ['switch.washer_power'],
+    });
   });
 
   it('should autofill LocalThings entities based on entity naming conventions', () => {
