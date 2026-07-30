@@ -29,12 +29,12 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'power_entity',
         label: 'Power Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['switch', 'binary_sensor'] } },
       },
       {
         name: 'machine_state_entity',
         label: 'Machine State Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'select', 'binary_sensor'] } },
       },
     ];
 
@@ -42,7 +42,7 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'wifi_entity',
         label: 'WiFi Status Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['binary_sensor', 'switch'] } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['binary_sensor', 'switch', 'sensor'] } },
       },
       {
         name: 'lock_entity',
@@ -88,12 +88,12 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'mode_entity',
         label: 'Mode Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'select'] } },
       },
       {
         name: 'job_state_entity',
         label: 'Job State Entity (Optional)',
-        selector: { entity: { device_id: deviceId, integration: integrations } },
+        selector: { entity: { device_id: deviceId, integration: integrations, domain: ['sensor', 'select'] } },
       },
       {
         name: 'time_entity',
