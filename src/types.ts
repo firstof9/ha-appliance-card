@@ -18,7 +18,7 @@ export interface HomeAssistant {
   callService(domain: string, service: string, data?: Record<string, any>): Promise<void>;
 }
 
-export interface SmartthingsCardConfig {
+export interface ApplianceCardConfig {
   type: string;
   appliance_type: 'microwave' | 'oven' | 'dishwasher' | 'washer' | 'dryer' | 'refrigerator';
   device_id?: string;
@@ -35,6 +35,7 @@ export interface SmartthingsCardConfig {
   filter_reset_entity?: string;
   wifi_entity?: string;
   lock_entity?: string;
+  alarm_code_entity?: string;
   fan_entity?: string;
   light_entity?: string;
   temperature_entity?: string;
@@ -42,3 +43,6 @@ export interface SmartthingsCardConfig {
   background_color?: string;
   state_images?: Record<string, string>;
 }
+
+export type SmartthingsCardConfig = ApplianceCardConfig;
+

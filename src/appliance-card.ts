@@ -1,7 +1,7 @@
 import { LitElement, html, TemplateResult, PropertyValues } from 'lit';
 import { live } from 'lit/directives/live.js';
 import { customElement, property, state } from 'lit/decorators.js';
-import { HomeAssistant, SmartthingsCardConfig } from './types';
+import { HomeAssistant, ApplianceCardConfig } from './types';
 import { styles } from './styles/styles';
 import { formatCountdown, getFilterColor, getAsset } from './utils';
 import './editor';
@@ -18,7 +18,7 @@ console.info(
 export class ApplianceCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private config!: SmartthingsCardConfig;
+  @state() private config!: ApplianceCardConfig;
   @state() private _currentTime = new Date().getTime();
   private _timer?: number;
 
@@ -55,7 +55,7 @@ export class ApplianceCard extends LitElement {
     return 3;
   }
 
-  public setConfig(config: SmartthingsCardConfig): void {
+  public setConfig(config: ApplianceCardConfig): void {
     if (!config) {
       throw new Error('Invalid configuration');
     }
@@ -109,6 +109,7 @@ export class ApplianceCard extends LitElement {
         this.config.filter_reset_entity,
         this.config.wifi_entity,
         this.config.lock_entity,
+        this.config.alarm_code_entity,
         this.config.fan_entity,
         this.config.light_entity,
         this.config.temperature_entity,
@@ -537,13 +538,31 @@ export class ApplianceCard extends LitElement {
   private _renderSecondaryIcons(): TemplateResult | void {
     const wifiState = this.config.wifi_entity ? this.hass.states[this.config.wifi_entity] : null;
     const lockState = this.config.lock_entity ? this.hass.states[this.config.lock_entity] : null;
+    const alarmState = this.config.alarm_code_entity ? this.hass.states[this.config.alarm_code_entity] : null;
 
-    if (!wifiState && !lockState) return;
+    const isAlarmActive =
+      alarmState &&
+      alarmState.state !== undefined &&
+      alarmState.state !== null &&
+      !['off', 'none', '0', '0.0', 'normal', 'ok', 'unavailable', 'unknown', ''].includes(
+        String(alarmState.state).trim().toLowerCase(),
+      );
+
+    if (!wifiState && !lockState && !isAlarmActive) return;
 
     const appliance = this.config.appliance_type;
 
     return html`
       <div class="secondary-icons">
+        ${isAlarmActive
+          ? html`
+              <ha-icon
+                class="secondary-icon alarm active"
+                icon="mdi:alert-circle"
+                title="Alarm Code: ${alarmState!.state}"
+              ></ha-icon>
+            `
+          : ''}
         ${wifiState
           ? html`
               <img

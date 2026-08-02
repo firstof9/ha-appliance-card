@@ -213,4 +213,30 @@ describe('ApplianceCard rendering', () => {
     const img = activeIconContainer?.querySelector('img.job-icon');
     expect(img?.getAttribute('alt')).toBe('Sensing');
   });
+
+  it('should render secondary alarm icon when alarm_code_entity is active', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.washer_alarm_code': {
+          state: 'DC',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'washer',
+      alarm_code_entity: 'sensor.washer_alarm_code',
+    });
+    element.hass = hass as any;
+
+    await element.updateComplete;
+
+    const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
+    expect(alarmIcon).toBeTruthy();
+    expect(alarmIcon?.getAttribute('title')).toBe('Alarm Code: DC');
+  });
 });

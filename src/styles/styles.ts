@@ -512,6 +512,15 @@ export const styles = css`
     transition: opacity 0.3s ease;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
   }
+  .secondary-icon.alarm {
+    --mdc-icon-size: 32px;
+    color: #f44336;
+    animation: alarm-blink 1.5s ease-in-out infinite;
+  }
+  @keyframes alarm-blink {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(244, 67, 54, 0.8)); opacity: 1; }
+    50% { filter: drop-shadow(0 0 10px rgba(244, 67, 54, 1)); opacity: 0.5; }
+  }
   .secondary-icon.active {
   }
 
