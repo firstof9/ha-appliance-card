@@ -33,7 +33,17 @@ lovelace:
 
 ## Features
 
-- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, and more.
+- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **LG ThinQ**, and **SmartThinQ LGE Sensors**.
+
+### Supported Integrations
+
+| Integration | Domain / ID | Description |
+| --- | --- | --- |
+| **SmartThings** | `smartthings` | Core Home Assistant SmartThings integration |
+| **LocalThings** | `localthings` | Local SmartThings integration |
+| **LG ThinQ** | `lg_thinq` | Core Home Assistant LG ThinQ integration |
+| **SmartThinQ LGE Sensors** | `smartthinq_sensors` | Custom LG ThinQ integration |
+
 - **Modern Glassmorphic UI**: Sleek, transparent design elements with vibrant accents.
 - **7-Segment Digital Readouts**: Authentic digital display for timers and temperatures with grey "88" placeholders.
 - **Responsive Layout**: Fully supports the new Home Assistant **Sections** dashboard with dynamic resizing.
