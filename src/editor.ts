@@ -1,16 +1,17 @@
 import { LitElement, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { HomeAssistant, SmartthingsCardConfig } from './types';
+import { HomeAssistant, ApplianceCardConfig, SmartthingsCardConfig } from './types';
 
 @customElement('appliance-card-editor')
 export class ApplianceCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: SmartthingsCardConfig;
+  @state() private _config?: ApplianceCardConfig;
 
-  public setConfig(config: SmartthingsCardConfig): void {
+  public setConfig(config: ApplianceCardConfig): void {
     this._config = config;
   }
+
 
   private _schema() {
     const deviceId = this._config?.device_id;
@@ -70,6 +71,11 @@ export class ApplianceCardEditor extends LitElement {
         name: 'lock_entity',
         label: 'Child Lock Entity (Optional)',
         selector: getEntitySelector(['binary_sensor', 'switch']),
+      },
+      {
+        name: 'alarm_code_entity',
+        label: 'Alarm Code Entity (Optional)',
+        selector: getEntitySelector(['sensor', 'select']),
       },
     ];
 
@@ -207,7 +213,7 @@ export class ApplianceCardEditor extends LitElement {
     );
   }
 
-  private _autofillConfig(config: SmartthingsCardConfig): SmartthingsCardConfig {
+  private _autofillConfig(config: ApplianceCardConfig): ApplianceCardConfig {
     if (!this.hass) return config;
 
     const deviceId = config.device_id;
@@ -261,6 +267,7 @@ export class ApplianceCardEditor extends LitElement {
     newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity', '_ssid'], 'binary_sensor') || findEntity(['_ssid'], 'sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock', '_door_lock', '_remote_start']);
+    newConfig.alarm_code_entity = newConfig.alarm_code_entity || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm'], 'sensor') || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm'], 'select');
     newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan', '_fan_speed', ''], 'fan') || findEntity(['_fan_speed'], 'number');
     newConfig.light_entity = newConfig.light_entity || findEntity(['_light', '_lamp', ''], 'light') || findEntity(['_light', '_lamp'], 'switch');
     newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_temperature', '_target_temperature'], 'sensor');

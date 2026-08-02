@@ -207,4 +207,26 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.fan_entity).toBe('fan.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000');
     expect(autofilled.light_entity).toBe('switch.kitchen_samsung_microwave_tp2x_da_ks_microwave_0101x_40436241_50040100011411000200000000000000_lamp');
   });
+
+  it('should autofill alarm_code_entity for Samsung washer alarm code', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const alarmHass = {
+      ...mockHass,
+      entities: {
+        'sensor.samsung_washer_da_wm_tp2_20_common_alarm_code': { device_id: 'dev_local_washer' },
+      },
+      states: {
+        'sensor.samsung_washer_da_wm_tp2_20_common_alarm_code': { state: 'DC', attributes: { friendly_name: 'Washer Alarm Code' } },
+      },
+    };
+    editor.hass = alarmHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_local_washer',
+      appliance_type: 'washer',
+    });
+
+    expect(autofilled.alarm_code_entity).toBe('sensor.samsung_washer_da_wm_tp2_20_common_alarm_code');
+  });
 });
