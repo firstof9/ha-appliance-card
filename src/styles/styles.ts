@@ -586,4 +586,166 @@ export const styles = css`
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
+
+  /* Cooktop Appliance Styles */
+  .cooktop .appliance-img {
+    height: 70%;
+    max-width: 40%;
+    left: 5%;
+  }
+
+  .cooktop-burners-overlay {
+    position: absolute;
+    top: 50%;
+    left: 47%;
+    transform: translateY(-50%);
+    width: 46%;
+    height: 80%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    z-index: 5;
+  }
+
+  .cooktop-burners-overlay.has-center {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .burner-element {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    transition: all 0.4s ease;
+    padding: 4px;
+    min-height: 55px;
+  }
+
+  .burner-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .burner-ring {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 1.5;
+    transition: all 0.4s ease;
+  }
+
+  .burner-element-coil {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1;
+    stroke-dasharray: 4, 3;
+    transition: all 0.4s ease;
+  }
+
+  .burner-element.center-rear {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .burner-element.left-rear {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .burner-element.right-rear {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .cooktop-burners-overlay.has-center .burner-element.right-rear {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .burner-element.left-front {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .burner-element.right-front {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .cooktop-burners-overlay.has-center .burner-element.right-front {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  .burner-element.on {
+    background: radial-gradient(circle, rgba(255, 87, 34, calc(0.15 + 0.35 * var(--burner-glow-factor, 1))) 0%, rgba(255, 87, 34, 0.05) 75%);
+    box-shadow: 0 0 calc(var(--burner-glow-px, 14px)) rgba(255, 87, 34, calc(0.3 + 0.5 * var(--burner-glow-factor, 1))), inset 0 0 calc(var(--burner-glow-px, 12px) * 0.8) rgba(255, 87, 34, calc(0.2 + 0.4 * var(--burner-glow-factor, 1)));
+    animation: burner-heat-pulse 2.5s ease-in-out infinite;
+  }
+
+  .burner-element.on .burner-ring {
+    stroke: #ff5722;
+    stroke-opacity: var(--burner-glow-opacity, 1);
+    filter: drop-shadow(0 0 calc(var(--burner-glow-px, 4px) * 0.4) #ff5722);
+  }
+
+  .burner-element.on .burner-element-coil {
+    stroke: #ffab91;
+    stroke-width: calc(1px + 0.8px * var(--burner-glow-factor, 1));
+    stroke-opacity: var(--burner-glow-opacity, 1);
+    filter: drop-shadow(0 0 calc(var(--burner-glow-px, 6px) * 0.5) #ff5722);
+  }
+
+  @keyframes burner-heat-pulse {
+    0%, 100% { box-shadow: 0 0 calc(var(--burner-glow-px, 12px) * 0.8) rgba(255, 87, 34, calc(0.3 + 0.3 * var(--burner-glow-factor, 1))), inset 0 0 calc(var(--burner-glow-px, 10px) * 0.7) rgba(255, 87, 34, 0.3); }
+    50% { box-shadow: 0 0 calc(var(--burner-glow-px, 14px) * 1.3) rgba(255, 87, 34, calc(0.4 + 0.5 * var(--burner-glow-factor, 1))), inset 0 0 calc(var(--burner-glow-px, 12px) * 1.1) rgba(255, 87, 34, 0.6); }
+  }
+
+  .burner-label {
+    position: relative;
+    z-index: 2;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--secondary-text-color, #aaa);
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+
+  .burner-element.on .burner-label {
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(255, 87, 34, 0.9);
+  }
+
+  .burner-power {
+    position: relative;
+    z-index: 2;
+    font-family: 'segment7', monospace;
+    font-size: 14px;
+    color: var(--accent-color, #ff9800);
+    margin-top: 2px;
+    line-height: 1;
+  }
+
+  .burner-sync-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 10px;
+    color: #2196f3;
+    display: flex;
+    align-items: center;
+  }
+
+  .burner-sync-badge ha-icon {
+    --mdc-icon-size: 12px;
+  }
 `;
