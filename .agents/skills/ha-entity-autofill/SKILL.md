@@ -12,6 +12,7 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 - **Power**: `['_switch', '_power', '_power_switch']` (switch) or `['_power', '_state']` (binary_sensor).
 - **Machine State**: `['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state']`.
 - **Job State**: `['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode', '_program_progress', '_selected_program', '_active_program']`.
+- **Washer / Dryer**: `_run_state`, `_pre_state`, `_current_course`, `_course_selection`, `_remaining_time`, `_countdown_time`, `_error_message`, `_child_lock`, `_ssid`.
 - **Time Remaining**: `['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time', '_cook_time_remaining', '_kitchen_timer', '_program_finish_time']` (sensor).
 - **WiFi Status**: `['_wifi', '_connectivity', '_ssid']`.
 - **Child Lock**: `['_lock', '_child_lock', '_door_lock', '_remote_start', '_remote_enabled', '_remote_control']`.

@@ -232,6 +232,50 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.alarm_code_entity).toBe('sensor.samsung_washer_da_wm_tp2_20_common_alarm_code');
   });
 
+  it('should autofill LG SmartThinQ dryer entities including course_selection, countdown_time, and error_message', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const smartthinqDryerHass = {
+      ...mockHass,
+      entities: {
+        'switch.dryer_power': { device_id: 'dev_smartthinq_dryer' },
+        'sensor.dryer_run_state': { device_id: 'dev_smartthinq_dryer' },
+        'sensor.dryer_pre_state': { device_id: 'dev_smartthinq_dryer' },
+        'select.dryer_course_selection': { device_id: 'dev_smartthinq_dryer' },
+        'sensor.dryer_countdown_time': { device_id: 'dev_smartthinq_dryer' },
+        'sensor.dryer_remaining_time': { device_id: 'dev_smartthinq_dryer' },
+        'binary_sensor.dryer_child_lock': { device_id: 'dev_smartthinq_dryer' },
+        'sensor.dryer_error_message': { device_id: 'dev_smartthinq_dryer' },
+        'sensor.dryer_ssid': { device_id: 'dev_smartthinq_dryer' },
+      },
+      states: {
+        'switch.dryer_power': { state: 'on', attributes: { friendly_name: 'Dryer Power' } },
+        'sensor.dryer_run_state': { state: 'drying', attributes: { friendly_name: 'Run State' } },
+        'sensor.dryer_pre_state': { state: 'drying', attributes: { friendly_name: 'Pre State' } },
+        'select.dryer_course_selection': { state: 'Normal', attributes: { friendly_name: 'Course Selection' } },
+        'sensor.dryer_countdown_time': { state: '00:35:00', attributes: { friendly_name: 'Countdown Time' } },
+        'sensor.dryer_remaining_time': { state: '00:35:00', attributes: { friendly_name: 'Remaining Time' } },
+        'binary_sensor.dryer_child_lock': { state: 'off', attributes: { friendly_name: 'Child Lock' } },
+        'sensor.dryer_error_message': { state: 'None', attributes: { friendly_name: 'Error Message' } },
+        'sensor.dryer_ssid': { state: 'HomeNetwork', attributes: { friendly_name: 'SSID' } },
+      },
+    };
+    editor.hass = smartthinqDryerHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_smartthinq_dryer',
+      appliance_type: 'dryer',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.dryer_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.dryer_run_state');
+    expect(autofilled.job_state_entity).toBe('sensor.dryer_pre_state');
+    expect(autofilled.time_entity).toBe('sensor.dryer_countdown_time');
+    expect(autofilled.lock_entity).toBe('binary_sensor.dryer_child_lock');
+    expect(autofilled.alarm_code_entity).toBe('sensor.dryer_error_message');
+    expect(autofilled.wifi_entity).toBe('sensor.dryer_ssid');
+  });
+
   it('should autofill LG ThinQ refrigerator entities (number domain temps, water filter)', () => {
     const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     const lgFridgeHassConfig = {
