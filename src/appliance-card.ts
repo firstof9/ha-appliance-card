@@ -441,6 +441,17 @@ export class ApplianceCard extends LitElement {
         { name: 'others', left: '65%', icon: 'cooking' },
         { name: 'cooking', left: '65%', icon: 'cooking' },
       ],
+      kettle: [
+        { name: 'boiling', left: '65%', icon: 'boil' },
+        { name: 'boil', left: '65%', icon: 'boil' },
+        { name: 'black_tea_boil', left: '65%', icon: 'boil' },
+        { name: 'coffee', left: '65%', icon: 'coffee' },
+        { name: 'green_tea', left: '65%', icon: 'tea' },
+        { name: 'oolong_tea', left: '65%', icon: 'tea' },
+        { name: 'tea', left: '65%', icon: 'tea' },
+        { name: 'keep_warm', left: '65%', icon: 'boil' },
+        { name: 'warm', left: '65%', icon: 'boil' },
+      ],
     };
 
     if (!stages[appliance]) return;
