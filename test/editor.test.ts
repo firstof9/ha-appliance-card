@@ -234,7 +234,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
 
   it('should autofill LG ThinQ refrigerator entities (number domain temps, water filter)', () => {
     const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
-    const lgFridgeHass = {
+    const lgFridgeHassConfig = {
       ...mockHass,
       entities: {
         'binary_sensor.kitchen_refrigerator_door': { device_id: 'dev_lg_fridge' },
@@ -249,7 +249,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
         'sensor.kitchen_refrigerator_water_filter': { state: '90', attributes: { friendly_name: 'Water Filter' } },
       },
     };
-    editor.hass = lgFridgeHass as any;
+    editor.hass = lgFridgeHassConfig as any;
 
     const autofilled = (editor as any)._autofillConfig({
       type: 'custom:appliance-card',
