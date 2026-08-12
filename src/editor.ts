@@ -351,8 +351,8 @@ export class ApplianceCardEditor extends LitElement {
 
     // 3. Autofill logic supporting SmartThings, LocalThings, SmartThinQ Sensors, LG ThinQ, GE/Café, Home Connect, and Govee
     newConfig.power_entity = newConfig.power_entity || findEntity(['_cooktop_status'], 'binary_sensor') || findEntity(['_switch', '_power', '_power_switch', '_oven'], 'water_heater') || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
-    newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state', '_status']);
-    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode', '_program_progress', '_selected_program', '_active_program', '_mode']);
+    newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state']) || findEntity(['_status'], 'sensor') || findEntity(['_status'], 'select');
+    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode', '_program_progress', '_selected_program', '_active_program']) || findEntity(['_mode'], 'select') || findEntity(['_mode'], 'sensor');
     newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time', '_cook_time_remaining', '_kitchen_timer', '_program_finish_time'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity', '_ssid'], 'binary_sensor') || findEntity(['_ssid'], 'sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock', '_door_lock', '_remote_start', '_remote_enabled', '_remote_control']);
