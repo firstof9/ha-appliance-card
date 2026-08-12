@@ -15,7 +15,7 @@ export class ApplianceCardEditor extends LitElement {
 
   private _schema() {
     const deviceId = this._config?.device_id;
-    const integrations = ['smartthings', 'localthings', 'smartthinq_sensors', 'lg_thinq', 'ge_home', 'homeconnect', 'govee', 'govee_ble'];
+    const integrations = ['smartthings', 'localthings', 'smartthinq_sensors', 'lg_thinq', 'ge_home', 'homeconnect', 'govee', 'govee_ble', 'mqtt'];
 
     const getEntitySelector = (domain?: string | string[], multiple?: boolean) => {
       const entitySelectorConfig: Record<string, any> = {};

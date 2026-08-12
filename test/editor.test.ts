@@ -32,6 +32,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'homeconnect' },
       { integration: 'govee' },
       { integration: 'govee_ble' },
+      { integration: 'mqtt' },
     ]);
 
     const powerSchema = schema.find((s: any) => s.name === 'power_entity');

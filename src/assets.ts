@@ -27,6 +27,9 @@ import dryer_lock_png from '../images/dryer/lock.png';
 import dryer_wifi_on_png from '../images/dryer/wifi-on.png';
 import dryer_wifi_png from '../images/dryer/wifi.png';
 import kettle_appliance_png from '../images/kettle/appliance.png';
+import kettle_boil_png from '../images/kettle/boil.png';
+import kettle_coffee_png from '../images/kettle/coffee.png';
+import kettle_tea_png from '../images/kettle/tea.png';
 import microwave_appliance_png from '../images/microwave/appliance.png';
 import microwave_autocook_off_png from '../images/microwave/autocook-off.png';
 import microwave_autocook_png from '../images/microwave/autocook.png';
@@ -124,6 +127,9 @@ export const ASSETS: Record<string, Record<string, string>> = {
   },
   'kettle': {
     'appliance.png': kettle_appliance_png,
+    'boil.png': kettle_boil_png,
+    'coffee.png': kettle_coffee_png,
+    'tea.png': kettle_tea_png,
   },
   'microwave': {
     'appliance.png': microwave_appliance_png,
