@@ -239,4 +239,40 @@ describe('ApplianceCard rendering', () => {
     expect(alarmIcon).toBeTruthy();
     expect(alarmIcon?.getAttribute('title')).toBe('Alarm Code: DC');
   });
+
+  it('should render the card with cooktop configuration and burner status elements', async () => {
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'cooktop',
+      burner_left_front_on_entity: 'binary_sensor.cooktop_left_front_on',
+      burner_left_front_power_entity: 'sensor.cooktop_left_front_power_pct',
+      burner_right_rear_on_entity: 'binary_sensor.cooktop_right_rear_on',
+      sabbath_mode_entity: 'switch.cooktop_sabbath_mode',
+    });
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'binary_sensor.cooktop_left_front_on': { state: 'on', attributes: {} },
+        'sensor.cooktop_left_front_power_pct': { state: '85', attributes: {} },
+        'binary_sensor.cooktop_right_rear_on': { state: 'off', attributes: {} },
+        'switch.cooktop_sabbath_mode': { state: 'on', attributes: {} },
+      },
+    };
+    element.hass = hass as any;
+
+    await element.updateComplete;
+
+    const cooktopContainer = element.shadowRoot?.querySelector('.container.cooktop');
+    expect(cooktopContainer).not.toBeNull();
+
+    const leftFrontBurner = element.shadowRoot?.querySelector('.burner-element.left-front');
+    expect(leftFrontBurner?.classList.contains('on')).toBe(true);
+
+    const powerText = leftFrontBurner?.querySelector('.burner-power');
+    expect(powerText?.textContent?.trim()).toBe('85%');
+
+    const sabbathIcon = element.shadowRoot?.querySelector('.secondary-icon.sabbath');
+    expect(sabbathIcon).not.toBeNull();
+  });
 });

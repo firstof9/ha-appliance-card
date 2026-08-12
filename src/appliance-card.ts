@@ -113,6 +113,21 @@ export class ApplianceCard extends LitElement {
         this.config.fan_entity,
         this.config.light_entity,
         this.config.temperature_entity,
+        this.config.burner_left_front_on_entity,
+        this.config.burner_left_rear_on_entity,
+        this.config.burner_center_rear_on_entity,
+        this.config.burner_right_front_on_entity,
+        this.config.burner_right_rear_on_entity,
+        this.config.burner_left_front_sync_entity,
+        this.config.burner_left_rear_sync_entity,
+        this.config.burner_center_rear_sync_entity,
+        this.config.burner_right_front_sync_entity,
+        this.config.burner_right_rear_sync_entity,
+        this.config.burner_left_front_power_entity,
+        this.config.burner_left_rear_power_entity,
+        this.config.burner_right_front_power_entity,
+        this.config.burner_right_rear_power_entity,
+        this.config.sabbath_mode_entity,
         ...(this.config.door_entities || []),
       ].filter(Boolean) as string[];
 
@@ -170,6 +185,10 @@ export class ApplianceCard extends LitElement {
 
     if (this.config.appliance_type === 'refrigerator') {
       return this._renderRefrigerator();
+    }
+
+    if (this.config.appliance_type === 'cooktop') {
+      return this._renderCooktop();
     }
 
     return html`
@@ -548,12 +567,24 @@ export class ApplianceCard extends LitElement {
         String(alarmState.state).trim().toLowerCase(),
       );
 
-    if (!wifiState && !lockState && !isAlarmActive) return;
+    const sabbathState = this.config.sabbath_mode_entity ? this.hass.states[this.config.sabbath_mode_entity] : null;
+
+    if (!wifiState && !lockState && !isAlarmActive && !sabbathState) return;
 
     const appliance = this.config.appliance_type;
 
     return html`
       <div class="secondary-icons">
+        ${sabbathState && sabbathState.state === 'on'
+          ? html`
+              <ha-icon
+                class="secondary-icon sabbath active"
+                icon="mdi:star-david"
+                title="Sabbath Mode On"
+                style="color: #9c27b0;"
+              ></ha-icon>
+            `
+          : ''}
         ${isAlarmActive
           ? html`
               <ha-icon
@@ -580,6 +611,126 @@ export class ApplianceCard extends LitElement {
             `
           : ''}
       </div>
+    `;
+  }
+
+  private _renderCooktop(): TemplateResult {
+    const applianceImg = this.config.appliance_image || this._getAsset('cooktop', 'appliance.png');
+    const bgColor = this.config.background_color || '#3d3d3d';
+
+    const hasCenter = Boolean(
+      this.config.burner_center_rear_on_entity ||
+        this.config.burner_center_rear_sync_entity,
+    );
+
+    const burners = [
+      {
+        key: 'left-rear',
+        label: 'Left Rear',
+        onEntity: this.config.burner_left_rear_on_entity,
+        powerEntity: this.config.burner_left_rear_power_entity,
+        syncEntity: this.config.burner_left_rear_sync_entity,
+      },
+      ...(hasCenter
+        ? [
+            {
+              key: 'center-rear',
+              label: 'Center Rear',
+              onEntity: this.config.burner_center_rear_on_entity,
+              powerEntity: undefined,
+              syncEntity: this.config.burner_center_rear_sync_entity,
+            },
+          ]
+        : []),
+      {
+        key: 'right-rear',
+        label: 'Right Rear',
+        onEntity: this.config.burner_right_rear_on_entity,
+        powerEntity: this.config.burner_right_rear_power_entity,
+        syncEntity: this.config.burner_right_rear_sync_entity,
+      },
+      {
+        key: 'left-front',
+        label: 'Left Front',
+        onEntity: this.config.burner_left_front_on_entity,
+        powerEntity: this.config.burner_left_front_power_entity,
+        syncEntity: this.config.burner_left_front_sync_entity,
+      },
+      {
+        key: 'right-front',
+        label: 'Right Front',
+        onEntity: this.config.burner_right_front_on_entity,
+        powerEntity: this.config.burner_right_front_power_entity,
+        syncEntity: this.config.burner_right_front_sync_entity,
+      },
+    ];
+
+    return html`
+      <ha-card>
+        <div class="container cooktop">
+          <div class="bg-layer" style="--bg-color-primary: ${bgColor}"></div>
+          <img
+            class="appliance-img"
+            src="${applianceImg}"
+            @error=${(e: any) => (e.target.style.display = 'none')}
+          />
+
+          <div class="cooktop-burners-overlay ${hasCenter ? 'has-center' : ''}">
+            ${burners.map((b) => {
+              const onStateObj = b.onEntity ? this.hass.states[b.onEntity] : null;
+              const powerStateObj = b.powerEntity ? this.hass.states[b.powerEntity] : null;
+              const syncStateObj = b.syncEntity ? this.hass.states[b.syncEntity] : null;
+
+              const isOn = onStateObj?.state === 'on';
+              const isSynced = syncStateObj?.state === 'on';
+              const powerValue = powerStateObj && isOn ? powerStateObj.state : null;
+
+              return html`
+                ${(() => {
+                  const powerNum = powerValue !== null ? Math.max(0, Math.min(100, parseFloat(powerValue) || 0)) : (isOn ? 100 : 0);
+                  const glowFactor = (powerNum / 100).toFixed(2);
+                  const glowPx = Math.round(4 + powerNum * 0.16); // 4px at 0% to 20px at 100%
+                  const opacityVal = (0.2 + powerNum * 0.008).toFixed(2); // 0.20 to 1.00
+
+                  return html`
+                    <div
+                      class="burner-element ${b.key} ${isOn ? 'on' : 'off'}"
+                      style="--burner-glow-factor: ${glowFactor}; --burner-glow-px: ${glowPx}px; --burner-glow-opacity: ${opacityVal};"
+                    >
+                      <svg class="burner-svg" viewBox="0 0 100 100">
+                        <circle class="burner-ring outer" cx="50" cy="50" r="44" />
+                        <circle class="burner-ring inner" cx="50" cy="50" r="28" />
+                        <circle class="burner-ring center" cx="50" cy="50" r="12" />
+                        <path
+                          class="burner-element-coil"
+                          d="M 50,6 A 44 44 0 1 0 50,94 A 44 44 0 1 0 50,6 M 50,22 A 28 28 0 1 0 50,78 A 28 28 0 1 0 50,22"
+                        />
+                      </svg>
+                      ${isSynced
+                        ? html`
+                            <div class="burner-sync-badge" title="Synchronized">
+                              <ha-icon icon="mdi:link-variant"></ha-icon>
+                            </div>
+                          `
+                        : ''}
+                      <div class="burner-label">${b.label}</div>
+                      ${powerValue !== null
+                        ? html`<div class="burner-power">${powerValue}%</div>`
+                        : ''}
+                    </div>
+                  `;
+                })()}
+              `;
+            })}
+          </div>
+
+          <div class="right-panel">
+            <div class="timer-section">
+              ${this._renderSecondaryIcons()}
+            </div>
+          </div>
+        </div>
+      </ha-card>
     `;
   }
 
