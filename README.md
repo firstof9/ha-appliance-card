@@ -33,7 +33,7 @@ lovelace:
 
 ## Features
 
-- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **LG ThinQ**, and **SmartThinQ LGE Sensors**.
+- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **Bosch Home Connect**, **LG ThinQ**, and **SmartThinQ LGE Sensors**.
 
 ### Supported Integrations
 
@@ -41,6 +41,7 @@ lovelace:
 | --- | --- | --- |
 | **SmartThings** | `smartthings` | Core Home Assistant SmartThings integration |
 | **LocalThings** | `localthings` | Local SmartThings integration |
+| **Home Connect** | `homeconnect` | Core Home Assistant Bosch / Siemens Home Connect integration |
 | **LG ThinQ** | `lg_thinq` | Core Home Assistant LG ThinQ integration |
 | **SmartThinQ LGE Sensors** | `smartthinq_sensors` | Custom LG ThinQ integration |
 
