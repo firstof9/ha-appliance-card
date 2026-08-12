@@ -28,6 +28,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'localthings' },
       { integration: 'smartthinq_sensors' },
       { integration: 'lg_thinq' },
+      { integration: 'ge_home' },
     ]);
 
     const powerSchema = schema.find((s: any) => s.name === 'power_entity');
