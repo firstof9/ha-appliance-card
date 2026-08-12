@@ -417,4 +417,38 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.job_state_entity).toBe('select.smart_kettle_mode');
     expect(autofilled.temperature_entity).toBe('number.smart_kettle_target_temperature');
   });
+
+  it('should autofill Samsung range entities including cavity_state for job_state_entity', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const rangeHass = {
+      ...mockHass,
+      entities: {
+        'switch.samsung_range_tp1x_da_ks_range_0101x_power': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_machine_state': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_temperature': { device_id: 'dev_samsung_range' },
+      },
+      states: {
+        'switch.samsung_range_tp1x_da_ks_range_0101x_power': { state: 'on', attributes: { friendly_name: 'Range Power' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_machine_state': { state: 'running', attributes: { friendly_name: 'Machine State' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state': { state: 'baking', attributes: { friendly_name: 'Cavity State' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish': { state: '00:30:00', attributes: { friendly_name: 'Estimated Finish' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_temperature': { state: '350', attributes: { friendly_name: 'Temperature' } },
+      },
+    };
+    editor.hass = rangeHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_samsung_range',
+      appliance_type: 'oven',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.samsung_range_tp1x_da_ks_range_0101x_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_machine_state');
+    expect(autofilled.job_state_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state');
+    expect(autofilled.time_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish');
+    expect(autofilled.temperature_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_temperature');
+  });
 });
