@@ -687,6 +687,12 @@ export class ApplianceCard extends LitElement {
 
               return html`
                 <div class="burner-element ${b.key} ${isOn ? 'on' : 'off'}">
+                  <svg class="burner-svg" viewBox="0 0 100 100">
+                    <circle class="burner-ring outer" cx="50" cy="50" r="44" />
+                    <circle class="burner-ring inner" cx="50" cy="50" r="28" />
+                    <circle class="burner-ring center" cx="50" cy="50" r="12" />
+                    <path class="burner-element-coil" d="M 50,6 A 44 44 0 1 0 50,94 A 44 44 0 1 0 50,6 M 50,22 A 28 28 0 1 0 50,78 A 28 28 0 1 0 50,22" />
+                  </svg>
                   ${isSynced
                     ? html`
                         <div class="burner-sync-badge" title="Synchronized">

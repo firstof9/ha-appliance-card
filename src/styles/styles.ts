@@ -619,11 +619,35 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    border: 2px dashed rgba(255, 255, 255, 0.2);
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
     transition: all 0.4s ease;
     padding: 4px;
     min-height: 55px;
+  }
+
+  .burner-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .burner-ring {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 1.5;
+    transition: all 0.4s ease;
+  }
+
+  .burner-element-coil {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1;
+    stroke-dasharray: 4, 3;
+    transition: all 0.4s ease;
   }
 
   .burner-element.center-rear {
@@ -662,19 +686,30 @@ export const styles = css`
   }
 
   .burner-element.on {
-    border-style: solid;
-    border-color: #ff5722;
-    background: radial-gradient(circle, rgba(255, 87, 34, 0.35) 0%, rgba(255, 87, 34, 0.1) 70%);
-    box-shadow: 0 0 12px rgba(255, 87, 34, 0.6), inset 0 0 10px rgba(255, 87, 34, 0.4);
+    background: radial-gradient(circle, rgba(255, 87, 34, 0.3) 0%, rgba(255, 87, 34, 0.05) 75%);
+    box-shadow: 0 0 14px rgba(255, 87, 34, 0.6), inset 0 0 12px rgba(255, 87, 34, 0.4);
     animation: burner-heat-pulse 2.5s ease-in-out infinite;
+  }
+
+  .burner-element.on .burner-ring {
+    stroke: #ff5722;
+    filter: drop-shadow(0 0 4px #ff5722);
+  }
+
+  .burner-element.on .burner-element-coil {
+    stroke: #ffab91;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 6px #ff5722);
   }
 
   @keyframes burner-heat-pulse {
     0%, 100% { box-shadow: 0 0 10px rgba(255, 87, 34, 0.5), inset 0 0 8px rgba(255, 87, 34, 0.3); }
-    50% { box-shadow: 0 0 18px rgba(255, 87, 34, 0.85), inset 0 0 14px rgba(255, 87, 34, 0.6); }
+    50% { box-shadow: 0 0 20px rgba(255, 87, 34, 0.85), inset 0 0 16px rgba(255, 87, 34, 0.6); }
   }
 
   .burner-label {
+    position: relative;
+    z-index: 2;
     font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
@@ -684,11 +719,13 @@ export const styles = css`
   }
 
   .burner-element.on .burner-label {
-    color: #ffccbc;
-    text-shadow: 0 0 6px rgba(255, 87, 34, 0.8);
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(255, 87, 34, 0.9);
   }
 
   .burner-power {
+    position: relative;
+    z-index: 2;
     font-family: 'segment7', monospace;
     font-size: 14px;
     color: var(--accent-color, #ff9800);
