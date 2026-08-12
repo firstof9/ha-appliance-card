@@ -260,17 +260,17 @@ export class ApplianceCardEditor extends LitElement {
       });
     };
 
-    // 3. Autofill logic supporting SmartThings, LocalThings, SmartThinQ Sensors, and LG ThinQ
-    newConfig.power_entity = newConfig.power_entity || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
-    newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state']);
-    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode']);
-    newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time'], 'sensor');
+    // 3. Autofill logic supporting SmartThings, LocalThings, SmartThinQ Sensors, LG ThinQ, and GE/Café
+    newConfig.power_entity = newConfig.power_entity || findEntity(['_switch', '_power', '_power_switch', '_oven'], 'water_heater') || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
+    newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state']);
+    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode']);
+    newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time', '_cook_time_remaining', '_kitchen_timer'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity', '_ssid'], 'binary_sensor') || findEntity(['_ssid'], 'sensor');
-    newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock', '_door_lock', '_remote_start']);
+    newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock', '_door_lock', '_remote_start', '_remote_enabled']);
     newConfig.alarm_code_entity = newConfig.alarm_code_entity || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm'], 'sensor') || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm'], 'select');
     newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan', '_fan_speed', ''], 'fan') || findEntity(['_fan_speed'], 'number');
-    newConfig.light_entity = newConfig.light_entity || findEntity(['_light', '_lamp', ''], 'light') || findEntity(['_light', '_lamp'], 'switch');
-    newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_temperature', '_target_temperature'], 'sensor');
+    newConfig.light_entity = newConfig.light_entity || findEntity(['_light', '_lamp', ''], 'light') || findEntity(['_light', '_lamp'], 'switch') || findEntity(['_light'], 'select');
+    newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_temperature', '_target_temperature', '_display_temperature', '_raw_temperature'], 'sensor');
 
     if (type === 'refrigerator') {
       newConfig.fridge_temp_entity = newConfig.fridge_temp_entity || findEntity(['_fridge_temp', '_refrigerator_temp', '_refrigerator_temperature', '_fridge_target_temperature']);
