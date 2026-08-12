@@ -686,25 +686,40 @@ export class ApplianceCard extends LitElement {
               const powerValue = powerStateObj && isOn ? powerStateObj.state : null;
 
               return html`
-                <div class="burner-element ${b.key} ${isOn ? 'on' : 'off'}">
-                  <svg class="burner-svg" viewBox="0 0 100 100">
-                    <circle class="burner-ring outer" cx="50" cy="50" r="44" />
-                    <circle class="burner-ring inner" cx="50" cy="50" r="28" />
-                    <circle class="burner-ring center" cx="50" cy="50" r="12" />
-                    <path class="burner-element-coil" d="M 50,6 A 44 44 0 1 0 50,94 A 44 44 0 1 0 50,6 M 50,22 A 28 28 0 1 0 50,78 A 28 28 0 1 0 50,22" />
-                  </svg>
-                  ${isSynced
-                    ? html`
-                        <div class="burner-sync-badge" title="Synchronized">
-                          <ha-icon icon="mdi:link-variant"></ha-icon>
-                        </div>
-                      `
-                    : ''}
-                  <div class="burner-label">${b.label}</div>
-                  ${powerValue !== null
-                    ? html`<div class="burner-power">${powerValue}%</div>`
-                    : ''}
-                </div>
+                ${(() => {
+                  const powerNum = powerValue !== null ? Math.max(0, Math.min(100, parseFloat(powerValue) || 0)) : (isOn ? 100 : 0);
+                  const glowFactor = (powerNum / 100).toFixed(2);
+                  const glowPx = Math.round(4 + powerNum * 0.16); // 4px at 0% to 20px at 100%
+                  const opacityVal = (0.2 + powerNum * 0.008).toFixed(2); // 0.20 to 1.00
+
+                  return html`
+                    <div
+                      class="burner-element ${b.key} ${isOn ? 'on' : 'off'}"
+                      style="--burner-glow-factor: ${glowFactor}; --burner-glow-px: ${glowPx}px; --burner-glow-opacity: ${opacityVal};"
+                    >
+                      <svg class="burner-svg" viewBox="0 0 100 100">
+                        <circle class="burner-ring outer" cx="50" cy="50" r="44" />
+                        <circle class="burner-ring inner" cx="50" cy="50" r="28" />
+                        <circle class="burner-ring center" cx="50" cy="50" r="12" />
+                        <path
+                          class="burner-element-coil"
+                          d="M 50,6 A 44 44 0 1 0 50,94 A 44 44 0 1 0 50,6 M 50,22 A 28 28 0 1 0 50,78 A 28 28 0 1 0 50,22"
+                        />
+                      </svg>
+                      ${isSynced
+                        ? html`
+                            <div class="burner-sync-badge" title="Synchronized">
+                              <ha-icon icon="mdi:link-variant"></ha-icon>
+                            </div>
+                          `
+                        : ''}
+                      <div class="burner-label">${b.label}</div>
+                      ${powerValue !== null
+                        ? html`<div class="burner-power">${powerValue}%</div>`
+                        : ''}
+                    </div>
+                  `;
+                })()}
               `;
             })}
           </div>

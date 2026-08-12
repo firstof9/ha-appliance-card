@@ -686,25 +686,27 @@ export const styles = css`
   }
 
   .burner-element.on {
-    background: radial-gradient(circle, rgba(255, 87, 34, 0.3) 0%, rgba(255, 87, 34, 0.05) 75%);
-    box-shadow: 0 0 14px rgba(255, 87, 34, 0.6), inset 0 0 12px rgba(255, 87, 34, 0.4);
+    background: radial-gradient(circle, rgba(255, 87, 34, calc(0.15 + 0.35 * var(--burner-glow-factor, 1))) 0%, rgba(255, 87, 34, 0.05) 75%);
+    box-shadow: 0 0 calc(var(--burner-glow-px, 14px)) rgba(255, 87, 34, calc(0.3 + 0.5 * var(--burner-glow-factor, 1))), inset 0 0 calc(var(--burner-glow-px, 12px) * 0.8) rgba(255, 87, 34, calc(0.2 + 0.4 * var(--burner-glow-factor, 1)));
     animation: burner-heat-pulse 2.5s ease-in-out infinite;
   }
 
   .burner-element.on .burner-ring {
     stroke: #ff5722;
-    filter: drop-shadow(0 0 4px #ff5722);
+    stroke-opacity: var(--burner-glow-opacity, 1);
+    filter: drop-shadow(0 0 calc(var(--burner-glow-px, 4px) * 0.4) #ff5722);
   }
 
   .burner-element.on .burner-element-coil {
     stroke: #ffab91;
-    stroke-width: 1.5;
-    filter: drop-shadow(0 0 6px #ff5722);
+    stroke-width: calc(1px + 0.8px * var(--burner-glow-factor, 1));
+    stroke-opacity: var(--burner-glow-opacity, 1);
+    filter: drop-shadow(0 0 calc(var(--burner-glow-px, 6px) * 0.5) #ff5722);
   }
 
   @keyframes burner-heat-pulse {
-    0%, 100% { box-shadow: 0 0 10px rgba(255, 87, 34, 0.5), inset 0 0 8px rgba(255, 87, 34, 0.3); }
-    50% { box-shadow: 0 0 20px rgba(255, 87, 34, 0.85), inset 0 0 16px rgba(255, 87, 34, 0.6); }
+    0%, 100% { box-shadow: 0 0 calc(var(--burner-glow-px, 12px) * 0.8) rgba(255, 87, 34, calc(0.3 + 0.3 * var(--burner-glow-factor, 1))), inset 0 0 calc(var(--burner-glow-px, 10px) * 0.7) rgba(255, 87, 34, 0.3); }
+    50% { box-shadow: 0 0 calc(var(--burner-glow-px, 14px) * 1.3) rgba(255, 87, 34, calc(0.4 + 0.5 * var(--burner-glow-factor, 1))), inset 0 0 calc(var(--burner-glow-px, 12px) * 1.1) rgba(255, 87, 34, 0.6); }
   }
 
   .burner-label {
