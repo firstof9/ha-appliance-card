@@ -15,7 +15,7 @@ export class ApplianceCardEditor extends LitElement {
 
   private _schema() {
     const deviceId = this._config?.device_id;
-    const integrations = ['smartthings', 'localthings', 'smartthinq_sensors', 'lg_thinq'];
+    const integrations = ['smartthings', 'localthings', 'smartthinq_sensors', 'lg_thinq', 'ge_home'];
 
     const getEntitySelector = (domain?: string | string[], multiple?: boolean) => {
       const entitySelectorConfig: Record<string, any> = {};
@@ -342,7 +342,6 @@ export class ApplianceCardEditor extends LitElement {
       });
     };
 
-    // 3. Autofill logic supporting SmartThings, LocalThings, SmartThinQ Sensors, LG ThinQ, and GE/Café
     newConfig.power_entity = newConfig.power_entity || findEntity(['_cooktop_status'], 'binary_sensor') || findEntity(['_switch', '_power', '_power_switch', '_oven'], 'water_heater') || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
     newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state']);
     newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode']);

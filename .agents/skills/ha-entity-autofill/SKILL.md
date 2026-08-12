@@ -10,9 +10,9 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 ## Suffix Matchers & Normalization
 - **Trailing Numeric Suffix Normalization**: Strip trailing numbers (`/\_\d+$/`) such as `_2` or `_3` before evaluating suffix matchers so duplicated entity IDs across multiple integrations auto-populate correctly.
 - **Power**: `['_switch', '_power', '_power_switch']` (switch) or `['_power', '_state']` (binary_sensor).
-- **Machine State**: `['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state']`.
-- **Job State**: `['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode']`.
-- **Time Remaining**: `['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time']` (sensor).
+- **Machine State**: `['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state']`.
+- **Job State**: `['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode']`.
+- **Time Remaining**: `['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time', '_cook_time_remaining', '_kitchen_timer']` (sensor).
 - **WiFi Status**: `['_wifi', '_connectivity', '_ssid']`.
 - **Child Lock**: `['_lock', '_child_lock', '_door_lock', '_remote_start', '_remote_enabled']`.
 - **Sabbath Mode**: `['_sabbath_mode']` (switch/binary_sensor).

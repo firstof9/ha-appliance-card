@@ -597,9 +597,9 @@ export const styles = css`
   .cooktop-burners-overlay {
     position: absolute;
     top: 50%;
-    left: 45%;
+    left: 47%;
     transform: translateY(-50%);
-    width: 48%;
+    width: 46%;
     height: 80%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
