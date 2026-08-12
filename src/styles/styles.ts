@@ -586,4 +586,127 @@ export const styles = css`
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
+
+  /* Cooktop Appliance Styles */
+  .cooktop .appliance-img {
+    height: 70%;
+    max-width: 40%;
+    left: 5%;
+  }
+
+  .cooktop-burners-overlay {
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    transform: translateY(-50%);
+    width: 48%;
+    height: 80%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    z-index: 5;
+  }
+
+  .cooktop-burners-overlay.has-center {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .burner-element {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+    padding: 4px;
+    min-height: 55px;
+  }
+
+  .burner-element.center-rear {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .burner-element.left-rear {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .burner-element.right-rear {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .cooktop-burners-overlay.has-center .burner-element.right-rear {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .burner-element.left-front {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .burner-element.right-front {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .cooktop-burners-overlay.has-center .burner-element.right-front {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  .burner-element.on {
+    border-style: solid;
+    border-color: #ff5722;
+    background: radial-gradient(circle, rgba(255, 87, 34, 0.35) 0%, rgba(255, 87, 34, 0.1) 70%);
+    box-shadow: 0 0 12px rgba(255, 87, 34, 0.6), inset 0 0 10px rgba(255, 87, 34, 0.4);
+    animation: burner-heat-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes burner-heat-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 87, 34, 0.5), inset 0 0 8px rgba(255, 87, 34, 0.3); }
+    50% { box-shadow: 0 0 18px rgba(255, 87, 34, 0.85), inset 0 0 14px rgba(255, 87, 34, 0.6); }
+  }
+
+  .burner-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--secondary-text-color, #aaa);
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+
+  .burner-element.on .burner-label {
+    color: #ffccbc;
+    text-shadow: 0 0 6px rgba(255, 87, 34, 0.8);
+  }
+
+  .burner-power {
+    font-family: 'segment7', monospace;
+    font-size: 14px;
+    color: var(--accent-color, #ff9800);
+    margin-top: 2px;
+    line-height: 1;
+  }
+
+  .burner-sync-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 10px;
+    color: #2196f3;
+    display: flex;
+    align-items: center;
+  }
+
+  .burner-sync-badge ha-icon {
+    --mdc-icon-size: 12px;
+  }
 `;

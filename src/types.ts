@@ -20,7 +20,7 @@ export interface HomeAssistant {
 
 export interface ApplianceCardConfig {
   type: string;
-  appliance_type: 'microwave' | 'oven' | 'dishwasher' | 'washer' | 'dryer' | 'refrigerator';
+  appliance_type: 'microwave' | 'oven' | 'dishwasher' | 'washer' | 'dryer' | 'refrigerator' | 'cooktop';
   device_id?: string;
   power_entity?: string;
   mode_entity?: string;
@@ -39,6 +39,21 @@ export interface ApplianceCardConfig {
   fan_entity?: string;
   light_entity?: string;
   temperature_entity?: string;
+  burner_left_front_on_entity?: string;
+  burner_left_rear_on_entity?: string;
+  burner_center_rear_on_entity?: string;
+  burner_right_front_on_entity?: string;
+  burner_right_rear_on_entity?: string;
+  burner_left_front_sync_entity?: string;
+  burner_left_rear_sync_entity?: string;
+  burner_center_rear_sync_entity?: string;
+  burner_right_front_sync_entity?: string;
+  burner_right_rear_sync_entity?: string;
+  burner_left_front_power_entity?: string;
+  burner_left_rear_power_entity?: string;
+  burner_right_front_power_entity?: string;
+  burner_right_rear_power_entity?: string;
+  sabbath_mode_entity?: string;
   appliance_image?: string;
   background_color?: string;
   state_images?: Record<string, string>;

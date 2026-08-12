@@ -229,4 +229,48 @@ describe('ApplianceCardEditor with LocalThings', () => {
 
     expect(autofilled.alarm_code_entity).toBe('sensor.samsung_washer_da_wm_tp2_20_common_alarm_code');
   });
+
+  it('should autofill Café cooktop per-burner sensors and Sabbath mode switch', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const cooktopHass = {
+      ...mockHass,
+      entities: {
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status': { device_id: 'dev_cafe_cooktop' },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_front_on': { device_id: 'dev_cafe_cooktop' },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_rear_on': { device_id: 'dev_cafe_cooktop' },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_center_rear_on': { device_id: 'dev_cafe_cooktop' },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_right_front_on': { device_id: 'dev_cafe_cooktop' },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_right_rear_on': { device_id: 'dev_cafe_cooktop' },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_front_synchronized': { device_id: 'dev_cafe_cooktop' },
+        'sensor.kitchen_cafe_stove_123_cooktop_status_left_front_power_pct': { device_id: 'dev_cafe_cooktop' },
+        'switch.kitchen_cafe_stove_123_sabbath_mode': { device_id: 'dev_cafe_cooktop' },
+      },
+      states: {
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status': { state: 'on', attributes: { friendly_name: 'Cooktop Status' } },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_front_on': { state: 'on', attributes: {} },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_rear_on': { state: 'off', attributes: {} },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_center_rear_on': { state: 'off', attributes: {} },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_right_front_on': { state: 'off', attributes: {} },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_right_rear_on': { state: 'off', attributes: {} },
+        'binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_front_synchronized': { state: 'on', attributes: {} },
+        'sensor.kitchen_cafe_stove_123_cooktop_status_left_front_power_pct': { state: '85', attributes: {} },
+        'switch.kitchen_cafe_stove_123_sabbath_mode': { state: 'off', attributes: {} },
+      },
+    };
+    editor.hass = cooktopHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_cafe_cooktop',
+      appliance_type: 'cooktop',
+    });
+
+    expect(autofilled.power_entity).toBe('binary_sensor.kitchen_cafe_stove_123_cooktop_status');
+    expect(autofilled.burner_left_front_on_entity).toBe('binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_front_on');
+    expect(autofilled.burner_left_rear_on_entity).toBe('binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_rear_on');
+    expect(autofilled.burner_center_rear_on_entity).toBe('binary_sensor.kitchen_cafe_stove_123_cooktop_status_center_rear_on');
+    expect(autofilled.burner_left_front_sync_entity).toBe('binary_sensor.kitchen_cafe_stove_123_cooktop_status_left_front_synchronized');
+    expect(autofilled.burner_left_front_power_entity).toBe('sensor.kitchen_cafe_stove_123_cooktop_status_left_front_power_pct');
+    expect(autofilled.sabbath_mode_entity).toBe('switch.kitchen_cafe_stove_123_sabbath_mode');
+  });
 });
