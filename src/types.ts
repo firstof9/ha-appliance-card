@@ -20,7 +20,7 @@ export interface HomeAssistant {
 
 export interface ApplianceCardConfig {
   type: string;
-  appliance_type: 'microwave' | 'oven' | 'dishwasher' | 'washer' | 'dryer' | 'refrigerator' | 'cooktop';
+  appliance_type: 'microwave' | 'oven' | 'dishwasher' | 'washer' | 'dryer' | 'refrigerator' | 'cooktop' | 'kettle';
   device_id?: string;
   power_entity?: string;
   mode_entity?: string;

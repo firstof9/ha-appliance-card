@@ -26,6 +26,7 @@ import dryer_lock_on_png from '../images/dryer/lock-on.png';
 import dryer_lock_png from '../images/dryer/lock.png';
 import dryer_wifi_on_png from '../images/dryer/wifi-on.png';
 import dryer_wifi_png from '../images/dryer/wifi.png';
+import kettle_appliance_png from '../images/kettle/appliance.png';
 import microwave_appliance_png from '../images/microwave/appliance.png';
 import microwave_autocook_off_png from '../images/microwave/autocook-off.png';
 import microwave_autocook_png from '../images/microwave/autocook.png';
@@ -120,6 +121,9 @@ export const ASSETS: Record<string, Record<string, string>> = {
     'wifi.png': dryer_wifi_png,
   },
   'general': {
+  },
+  'kettle': {
+    'appliance.png': kettle_appliance_png,
   },
   'microwave': {
     'appliance.png': microwave_appliance_png,

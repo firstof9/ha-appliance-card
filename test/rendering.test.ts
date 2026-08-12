@@ -275,4 +275,32 @@ describe('ApplianceCard rendering', () => {
     const sabbathIcon = element.shadowRoot?.querySelector('.secondary-icon.sabbath');
     expect(sabbathIcon).not.toBeNull();
   });
+
+  it('should render the card with kettle configuration', async () => {
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'kettle',
+      power_entity: 'switch.smart_kettle_power_switch',
+      machine_state_entity: 'sensor.smart_kettle_status',
+      temperature_entity: 'number.smart_kettle_target_temperature',
+    });
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'switch.smart_kettle_power_switch': { state: 'on', attributes: { friendly_name: 'Power' } },
+        'sensor.smart_kettle_status': { state: 'boiling', attributes: { friendly_name: 'Status' } },
+        'number.smart_kettle_target_temperature': { state: '180', attributes: { friendly_name: 'Target Temp', unit_of_measurement: '°F' } },
+      },
+    };
+    element.hass = hass as any;
+
+    await element.updateComplete;
+
+    const kettleContainer = element.shadowRoot?.querySelector('.container.kettle');
+    expect(kettleContainer).not.toBeNull();
+
+    const tempDisplay = element.shadowRoot?.querySelector('.temp-fg span');
+    expect(tempDisplay?.textContent?.trim()).toBe('180');
+  });
 });
