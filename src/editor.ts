@@ -375,10 +375,10 @@ export class ApplianceCardEditor extends LitElement {
     }
 
     if (type === 'refrigerator') {
-      newConfig.fridge_temp_entity = newConfig.fridge_temp_entity || findEntity(['_fridge_temp', '_refrigerator_temp', '_refrigerator_temperature', '_fridge_target_temperature']);
+      newConfig.fridge_temp_entity = newConfig.fridge_temp_entity || findEntity(['_fridge_temp', '_fridge_temperature', '_refrigerator_temp', '_refrigerator_temperature', '_fridge_target_temperature']);
       newConfig.freezer_temp_entity = newConfig.freezer_temp_entity || findEntity(['_freezer_temp', '_freezer_temperature', '_freezer_target_temperature']);
       newConfig.ice_maker_entity = newConfig.ice_maker_entity || findEntity(['_ice_maker', '_ice_maker_status', '_ice_maker_switch']);
-      newConfig.filter_status_entity = newConfig.filter_status_entity || findEntity(['_filter_status', '_water_filter_status', '_filter_usage'], 'sensor');
+      newConfig.filter_status_entity = newConfig.filter_status_entity || findEntity(['_filter_status', '_water_filter_status', '_water_filter', '_filter_usage'], 'sensor');
       newConfig.filter_reset_entity = newConfig.filter_reset_entity || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'button') || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'switch');
 
       const doors = relevantEntities.filter(id => (id.includes('_door') || id.includes('_door_open')) && id.startsWith('binary_sensor.'));

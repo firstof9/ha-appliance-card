@@ -20,7 +20,7 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 - **Fan**: `fan` domain (any entity ID) or `['_fan', '_fan_speed']` (number).
 - **Light**: `light` domain or `['_light', '_lamp']` (switch/select).
 - **Appliance-Specific**:
-  - Refrigerator: `_fridge_temp`, `_freezer_temp`, `_ice_maker_status`, `_water_filter_status`, `_door_open`.
+  - Refrigerator: `_fridge_temp`, `_fridge_temperature`, `_freezer_temp`, `_freezer_temperature`, `_ice_maker_status`, `_water_filter_status`, `_water_filter`, `_door_open`, `_door`.
   - Oven / Range: `_display_temperature`, `_raw_temperature` (sensor), `water_heater` domain (power_entity).
   - Cooktop: `_cooktop_status` (power_entity), `_*_front_on`, `_*_rear_on`, `_*_synchronized` (binary_sensor), `_*_power_pct` (sensor).
 
