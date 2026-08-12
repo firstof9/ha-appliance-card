@@ -19,7 +19,7 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 - **Fan**: `fan` domain (any entity ID) or `['_fan', '_fan_speed']` (number).
 - **Light**: `light` domain or `['_light', '_lamp']` (switch).
 - **Appliance-Specific**:
-  - Refrigerator: `_fridge_temp`, `_freezer_temp`, `_ice_maker_status`, `_water_filter_status`, `_door_open`.
+  - Refrigerator: `_fridge_temp`, `_fridge_temperature`, `_freezer_temp`, `_freezer_temperature`, `_ice_maker_status`, `_express_mode`, `_water_filter_status`, `_water_filter`, `_door_open`, `_door`.
 
 ## Testing
 - Add corresponding unit test assertions in `test/editor.test.ts` whenever expanding auto-fill suffix matchers.

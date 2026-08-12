@@ -229,4 +229,38 @@ describe('ApplianceCardEditor with LocalThings', () => {
 
     expect(autofilled.alarm_code_entity).toBe('sensor.samsung_washer_da_wm_tp2_20_common_alarm_code');
   });
+
+  it('should autofill LG ThinQ refrigerator entities (number domain temps, water filter, express mode)', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const lgFridgeHass = {
+      ...mockHass,
+      entities: {
+        'binary_sensor.kitchen_refrigerator_door': { device_id: 'dev_lg_fridge' },
+        'number.kitchen_refrigerator_fridge_temperature': { device_id: 'dev_lg_fridge' },
+        'number.kitchen_refrigerator_freezer_temperature': { device_id: 'dev_lg_fridge' },
+        'sensor.kitchen_refrigerator_water_filter': { device_id: 'dev_lg_fridge' },
+        'switch.kitchen_refrigerator_express_mode': { device_id: 'dev_lg_fridge' },
+      },
+      states: {
+        'binary_sensor.kitchen_refrigerator_door': { state: 'off', attributes: { friendly_name: 'Door' } },
+        'number.kitchen_refrigerator_fridge_temperature': { state: '37', attributes: { friendly_name: 'Fridge Temp' } },
+        'number.kitchen_refrigerator_freezer_temperature': { state: '0', attributes: { friendly_name: 'Freezer Temp' } },
+        'sensor.kitchen_refrigerator_water_filter': { state: '90', attributes: { friendly_name: 'Water Filter' } },
+        'switch.kitchen_refrigerator_express_mode': { state: 'off', attributes: { friendly_name: 'Express Freeze' } },
+      },
+    };
+    editor.hass = lgFridgeHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_lg_fridge',
+      appliance_type: 'refrigerator',
+    });
+
+    expect(autofilled.fridge_temp_entity).toBe('number.kitchen_refrigerator_fridge_temperature');
+    expect(autofilled.freezer_temp_entity).toBe('number.kitchen_refrigerator_freezer_temperature');
+    expect(autofilled.filter_status_entity).toBe('sensor.kitchen_refrigerator_water_filter');
+    expect(autofilled.ice_maker_entity).toBe('switch.kitchen_refrigerator_express_mode');
+    expect(autofilled.door_entities).toEqual(['binary_sensor.kitchen_refrigerator_door']);
+  });
 });
