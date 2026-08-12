@@ -29,6 +29,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'smartthinq_sensors' },
       { integration: 'lg_thinq' },
       { integration: 'ge_home' },
+      { integration: 'homeconnect' },
     ]);
 
     const powerSchema = schema.find((s: any) => s.name === 'power_entity');
@@ -264,6 +265,44 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.ice_maker_entity).toBe('switch.kitchen_refrigerator_express_mode');
     expect(autofilled.door_entities).toEqual(['binary_sensor.kitchen_refrigerator_door']);
   });
+
+  it('should autofill Bosch Home Connect dishwasher entities', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const homeConnectHass = {
+      ...mockHass,
+      entities: {
+        'switch.dishwasher_power': { device_id: 'dev_bosch_dw' },
+        'sensor.dishwasher_operation_state': { device_id: 'dev_bosch_dw' },
+        'sensor.dishwasher_program_progress': { device_id: 'dev_bosch_dw' },
+        'sensor.dishwasher_program_finish_time': { device_id: 'dev_bosch_dw' },
+        'binary_sensor.dishwasher_connectivity': { device_id: 'dev_bosch_dw' },
+        'binary_sensor.dishwasher_remote_start': { device_id: 'dev_bosch_dw' },
+      },
+      states: {
+        'switch.dishwasher_power': { state: 'off', attributes: { friendly_name: 'Power' } },
+        'sensor.dishwasher_operation_state': { state: 'ready', attributes: { friendly_name: 'Operation State' } },
+        'sensor.dishwasher_program_progress': { state: 'unavailable', attributes: { friendly_name: 'Program Progress' } },
+        'sensor.dishwasher_program_finish_time': { state: 'unavailable', attributes: { friendly_name: 'Program Finish Time' } },
+        'binary_sensor.dishwasher_connectivity': { state: 'on', attributes: { friendly_name: 'Connectivity' } },
+        'binary_sensor.dishwasher_remote_start': { state: 'on', attributes: { friendly_name: 'Remote Start' } },
+      },
+    };
+    editor.hass = homeConnectHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_bosch_dw',
+      appliance_type: 'dishwasher',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.dishwasher_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.dishwasher_operation_state');
+    expect(autofilled.job_state_entity).toBe('sensor.dishwasher_program_progress');
+    expect(autofilled.time_entity).toBe('sensor.dishwasher_program_finish_time');
+    expect(autofilled.wifi_entity).toBe('binary_sensor.dishwasher_connectivity');
+    expect(autofilled.lock_entity).toBe('binary_sensor.dishwasher_remote_start');
+  });
+
   it('should autofill Café cooktop per-burner sensors and Sabbath mode switch', () => {
     const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
     const cooktopHass = {
