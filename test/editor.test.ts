@@ -28,6 +28,7 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'localthings' },
       { integration: 'smartthinq_sensors' },
       { integration: 'lg_thinq' },
+      { integration: 'ge_home' },
     ]);
 
     const powerSchema = schema.find((s: any) => s.name === 'power_entity');
@@ -228,5 +229,45 @@ describe('ApplianceCardEditor with LocalThings', () => {
     });
 
     expect(autofilled.alarm_code_entity).toBe('sensor.samsung_washer_da_wm_tp2_20_common_alarm_code');
+  });
+
+  it('should autofill Café oven entities for upper and lower ovens', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const cafeHass = {
+      ...mockHass,
+      entities: {
+        'water_heater.kitchen_cafe_stove_123_upper_oven': { device_id: 'dev_cafe_upper' },
+        'sensor.kitchen_cafe_stove_123_upper_oven_current_state': { device_id: 'dev_cafe_upper' },
+        'sensor.kitchen_cafe_stove_123_upper_oven_cook_mode': { device_id: 'dev_cafe_upper' },
+        'sensor.kitchen_cafe_stove_123_upper_oven_cook_time_remaining': { device_id: 'dev_cafe_upper' },
+        'sensor.kitchen_cafe_stove_123_upper_oven_display_temperature': { device_id: 'dev_cafe_upper' },
+        'binary_sensor.kitchen_cafe_stove_123_upper_oven_remote_enabled': { device_id: 'dev_cafe_upper' },
+        'select.kitchen_cafe_stove_123_upper_oven_light': { device_id: 'dev_cafe_upper' },
+      },
+      states: {
+        'water_heater.kitchen_cafe_stove_123_upper_oven': { state: 'on', attributes: { friendly_name: 'Upper Oven' } },
+        'sensor.kitchen_cafe_stove_123_upper_oven_current_state': { state: 'Cooking', attributes: { friendly_name: 'Upper Oven State' } },
+        'sensor.kitchen_cafe_stove_123_upper_oven_cook_mode': { state: 'Bake', attributes: { friendly_name: 'Upper Oven Cook Mode' } },
+        'sensor.kitchen_cafe_stove_123_upper_oven_cook_time_remaining': { state: '00:45:00', attributes: { friendly_name: 'Time Remaining' } },
+        'sensor.kitchen_cafe_stove_123_upper_oven_display_temperature': { state: '350', attributes: { friendly_name: 'Display Temp' } },
+        'binary_sensor.kitchen_cafe_stove_123_upper_oven_remote_enabled': { state: 'on', attributes: { friendly_name: 'Remote Control' } },
+        'select.kitchen_cafe_stove_123_upper_oven_light': { state: 'on', attributes: { friendly_name: 'Oven Light' } },
+      },
+    };
+    editor.hass = cafeHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_cafe_upper',
+      appliance_type: 'oven',
+    });
+
+    expect(autofilled.power_entity).toBe('water_heater.kitchen_cafe_stove_123_upper_oven');
+    expect(autofilled.machine_state_entity).toBe('sensor.kitchen_cafe_stove_123_upper_oven_current_state');
+    expect(autofilled.job_state_entity).toBe('sensor.kitchen_cafe_stove_123_upper_oven_cook_mode');
+    expect(autofilled.time_entity).toBe('sensor.kitchen_cafe_stove_123_upper_oven_cook_time_remaining');
+    expect(autofilled.temperature_entity).toBe('sensor.kitchen_cafe_stove_123_upper_oven_display_temperature');
+    expect(autofilled.lock_entity).toBe('binary_sensor.kitchen_cafe_stove_123_upper_oven_remote_enabled');
+    expect(autofilled.light_entity).toBe('select.kitchen_cafe_stove_123_upper_oven_light');
   });
 });
