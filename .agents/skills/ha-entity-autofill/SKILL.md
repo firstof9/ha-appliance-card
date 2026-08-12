@@ -22,11 +22,12 @@ Rules for automatic entity mapping when a user selects a `device_id` in the edit
 - **Light**: `light` domain or `['_light', '_lamp']` (switch/select).
 - **Appliance-Specific**:
   - Refrigerator: `_fridge_temp`, `_fridge_temperature`, `_freezer_temp`, `_freezer_temperature`, `_ice_maker_status`, `_water_filter_status`, `_water_filter`, `_door_open`, `_door`.
-  - Oven / Range: `_display_temperature`, `_raw_temperature` (sensor), `water_heater` domain (power_entity).
+  - Oven / Range: `_display_temperature`, `_raw_temperature` (sensor), `_cavity_state` (job_state_entity), `water_heater` domain (power_entity).
   - Cooktop: `_cooktop_status` (power_entity), `_*_front_on`, `_*_rear_on`, `_*_synchronized` (binary_sensor), `_*_power_pct` (sensor).
+  - Kettle: `_target_temperature` (number/sensor), `_status` (sensor/select), `_mode` (select), `_temperature` (sensor).
 
 ## Integrations Supported
-- `smartthings`, `localthings`, `smartthinq_sensors`, `lg_thinq`, `homeconnect`.
+- `smartthings`, `localthings`, `smartthinq_sensors`, `lg_thinq`, `ge_home`, `homeconnect`, `govee`, `govee_ble`.
 
 ## Testing
 - Add corresponding unit test assertions in `test/editor.test.ts` whenever expanding auto-fill suffix matchers.

@@ -30,6 +30,9 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'lg_thinq' },
       { integration: 'ge_home' },
       { integration: 'homeconnect' },
+      { integration: 'govee' },
+      { integration: 'govee_ble' },
+      { integration: 'mqtt' },
     ]);
 
     const powerSchema = schema.find((s: any) => s.name === 'power_entity');
@@ -426,5 +429,70 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.temperature_entity).toBe('sensor.kitchen_cafe_stove_123_upper_oven_display_temperature');
     expect(autofilled.lock_entity).toBe('binary_sensor.kitchen_cafe_stove_123_upper_oven_remote_enabled');
     expect(autofilled.light_entity).toBe('select.kitchen_cafe_stove_123_upper_oven_light');
+  });
+
+  it('should autofill Govee smart kettle entities', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const goveeKettleHass = {
+      ...mockHass,
+      entities: {
+        'switch.smart_kettle_power_switch': { device_id: 'dev_govee_kettle' },
+        'sensor.smart_kettle_status': { device_id: 'dev_govee_kettle' },
+        'select.smart_kettle_mode': { device_id: 'dev_govee_kettle' },
+        'number.smart_kettle_target_temperature': { device_id: 'dev_govee_kettle' },
+      },
+      states: {
+        'switch.smart_kettle_power_switch': { state: 'on', attributes: { friendly_name: 'Smart Kettle Power' } },
+        'sensor.smart_kettle_status': { state: 'boiling', attributes: { friendly_name: 'Smart Kettle Status' } },
+        'select.smart_kettle_mode': { state: 'green_tea', attributes: { friendly_name: 'Smart Kettle Mode' } },
+        'number.smart_kettle_target_temperature': { state: '180', attributes: { friendly_name: 'Target Temperature' } },
+      },
+    };
+    editor.hass = goveeKettleHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_govee_kettle',
+    });
+
+    expect(autofilled.appliance_type).toBe('kettle');
+    expect(autofilled.power_entity).toBe('switch.smart_kettle_power_switch');
+    expect(autofilled.machine_state_entity).toBe('sensor.smart_kettle_status');
+    expect(autofilled.job_state_entity).toBe('select.smart_kettle_mode');
+    expect(autofilled.temperature_entity).toBe('number.smart_kettle_target_temperature');
+  });
+
+  it('should autofill Samsung range entities including cavity_state for job_state_entity', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const rangeHass = {
+      ...mockHass,
+      entities: {
+        'switch.samsung_range_tp1x_da_ks_range_0101x_power': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_machine_state': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish': { device_id: 'dev_samsung_range' },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_temperature': { device_id: 'dev_samsung_range' },
+      },
+      states: {
+        'switch.samsung_range_tp1x_da_ks_range_0101x_power': { state: 'on', attributes: { friendly_name: 'Range Power' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_machine_state': { state: 'running', attributes: { friendly_name: 'Machine State' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state': { state: 'baking', attributes: { friendly_name: 'Cavity State' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish': { state: '00:30:00', attributes: { friendly_name: 'Estimated Finish' } },
+        'sensor.samsung_range_tp1x_da_ks_range_0101x_temperature': { state: '350', attributes: { friendly_name: 'Temperature' } },
+      },
+    };
+    editor.hass = rangeHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_samsung_range',
+      appliance_type: 'oven',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.samsung_range_tp1x_da_ks_range_0101x_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_machine_state');
+    expect(autofilled.job_state_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state');
+    expect(autofilled.time_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish');
+    expect(autofilled.temperature_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_temperature');
   });
 });

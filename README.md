@@ -33,7 +33,7 @@ lovelace:
 
 ## Features
 
-- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **GE Home (GE / Café)**, **Bosch Home Connect**, **LG ThinQ**, and **SmartThinQ LGE Sensors**.
+- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **Govee**, **GE Home (GE / Café)**, **Bosch Home Connect**, **LG ThinQ**, and **SmartThinQ LGE Sensors**.
 
 ### Supported Integrations
 
@@ -41,6 +41,7 @@ lovelace:
 | --- | --- | --- |
 | **SmartThings** | `smartthings` | Core Home Assistant SmartThings integration |
 | **LocalThings** | `localthings` | Local SmartThings integration |
+| **Govee** | `govee`, `govee_ble` | Govee Home / Govee BLE integrations |
 | **GE Home** | `ge_home` | GE Appliances / Café integration |
 | **Home Connect** | `homeconnect` | Core Home Assistant Bosch / Siemens Home Connect integration |
 | **LG ThinQ** | `lg_thinq` | Core Home Assistant LG ThinQ integration |
@@ -51,7 +52,7 @@ lovelace:
 - **Responsive Layout**: Fully supports the new Home Assistant **Sections** dashboard with dynamic resizing.
 - **Live Countdown**: Real-time progress tracking for all appliances.
 - **Visual Editor**: Integrated configuration GUI with automatic entity discovery.
-- **Appliance Specific Overlays**: Interactive door status, filter health progress bars, and device controls.
+- **Appliance Specific Overlays**: Interactive door status, filter health progress bars, cooktop heating coils, and device controls.
 
 ## Configuration
 
@@ -63,7 +64,7 @@ For manual YAML configuration:
 | --- | --- | --- | --- |
 | `type` | string | **Required** | `custom:appliance-card` (deprecated: `custom:smartthings-card`) |
 | `device_id` | string | **Required** | The Home Assistant device ID. |
-| `appliance_type` | string | **Optional** | `microwave`, `oven`, `dishwasher`, `washer`, `dryer`, `refrigerator`. Defaults to `microwave`. |
+| `appliance_type` | string | **Optional** | `microwave`, `oven`, `dishwasher`, `washer`, `dryer`, `refrigerator`, `cooktop`, `kettle`. Defaults to `microwave`. |
 | `power_entity` | string | **Optional** | The entity ID for power state (switch or binary_sensor). |
 | `mode_entity` | string | **Optional** | The entity ID for the current appliance mode. |
 | `machine_state_entity` | string | **Optional** | The entity ID for the machine state. |
