@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, ApplianceCardConfig } from './types';
 import { styles } from './styles/styles';
 import { formatCountdown, getFilterColor, getAsset } from './utils';
+import { getAlarmIcon } from './icons/alarm-icons';
 import './editor';
 import { version } from '../package.json';
 
@@ -597,13 +598,7 @@ export class ApplianceCard extends LitElement {
             `
           : ''}
         ${isAlarmActive
-          ? html`
-              <ha-icon
-                class="secondary-icon alarm active"
-                icon="mdi:alert-circle"
-                title="Alarm Code: ${alarmState!.state}"
-              ></ha-icon>
-            `
+          ? getAlarmIcon(String(alarmState!.state), appliance).svgTemplate
           : ''}
         ${wifiState
           ? html`
