@@ -499,12 +499,13 @@ export const styles = css`
     gap: 6px;
     align-items: center;
     justify-content: center;
-    z-index: 5;
+    z-index: 100;
   }
   .refrigerator .secondary-icons {
     position: absolute;
     top: 5%;
     right: 5%;
+    z-index: 100;
   }
   .secondary-icon-wrapper {
     display: inline-flex;
@@ -512,6 +513,7 @@ export const styles = css`
     justify-content: center;
     position: relative;
     cursor: pointer;
+    z-index: 100;
   }
   .secondary-icon {
     width: 40px;
@@ -818,17 +820,22 @@ export const styles = css`
     border-top-color: rgba(28, 28, 28, 0.92);
   }
 
-  /* Bottom Position */
+  /* Secondary Icons row defaults to bottom placement so it never clips at the top card boundary */
+  .secondary-icons [data-tooltip]:not([data-tooltip-pos])::after,
   [data-tooltip][data-tooltip-pos="bottom"]::after {
+    bottom: auto;
     top: calc(100% + 7px);
     left: 50%;
     transform: translateX(-50%) translateY(-4px);
   }
 
+  .secondary-icons [data-tooltip]:not([data-tooltip-pos])::before,
   [data-tooltip][data-tooltip-pos="bottom"]::before {
+    bottom: auto;
     top: calc(100% + 2px);
     left: 50%;
     transform: translateX(-50%) translateY(-4px);
+    border-top-color: transparent;
     border-bottom-color: rgba(28, 28, 28, 0.92);
   }
 
@@ -883,8 +890,12 @@ export const styles = css`
     transform: translateX(-50%) translateY(0);
   }
 
+  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):hover::after,
+  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):focus-visible::after,
   [data-tooltip][data-tooltip-pos="bottom"]:hover::after,
   [data-tooltip][data-tooltip-pos="bottom"]:focus-visible::after,
+  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):hover::before,
+  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):focus-visible::before,
   [data-tooltip][data-tooltip-pos="bottom"]:hover::before,
   [data-tooltip][data-tooltip-pos="bottom"]:focus-visible::before {
     transform: translateX(-50%) translateY(0);
