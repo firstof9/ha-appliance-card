@@ -750,4 +750,148 @@ export const styles = css`
   .burner-sync-badge ha-icon {
     --mdc-icon-size: 12px;
   }
+
+  /* Modern Tooltip Styling */
+  [data-tooltip] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  [data-tooltip]::before,
+  [data-tooltip]::after {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+  }
+
+  /* Tooltip Text Bubble */
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    font-family: var(--paper-font-body1_-_font-family, system-ui, -apple-system, sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: var(--primary-text-color, #ffffff);
+    background: rgba(28, 28, 28, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 5px 9px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  /* Tooltip Arrow */
+  [data-tooltip]::before {
+    content: '';
+    border: 5px solid transparent;
+  }
+
+  /* Default / Top Position */
+  [data-tooltip]:not([data-tooltip-pos])::after,
+  [data-tooltip][data-tooltip-pos="top"]::after {
+    bottom: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+  }
+
+  [data-tooltip]:not([data-tooltip-pos])::before,
+  [data-tooltip][data-tooltip-pos="top"]::before {
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border-top-color: rgba(28, 28, 28, 0.92);
+  }
+
+  /* Bottom Position */
+  [data-tooltip][data-tooltip-pos="bottom"]::after {
+    top: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  [data-tooltip][data-tooltip-pos="bottom"]::before {
+    top: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    border-bottom-color: rgba(28, 28, 28, 0.92);
+  }
+
+  /* Left Position */
+  [data-tooltip][data-tooltip-pos="left"]::after {
+    right: calc(100% + 7px);
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+  }
+
+  [data-tooltip][data-tooltip-pos="left"]::before {
+    right: calc(100% + 2px);
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+    border-left-color: rgba(28, 28, 28, 0.92);
+  }
+
+  /* Right Position */
+  [data-tooltip][data-tooltip-pos="right"]::after {
+    left: calc(100% + 7px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+  }
+
+  [data-tooltip][data-tooltip-pos="right"]::before {
+    left: calc(100% + 2px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    border-right-color: rgba(28, 28, 28, 0.92);
+  }
+
+  /* Hover & Focus Interactions */
+  [data-tooltip]:hover::before,
+  [data-tooltip]:hover::after,
+  [data-tooltip]:focus-visible::before,
+  [data-tooltip]:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  [data-tooltip]:not([data-tooltip-pos]):hover::after,
+  [data-tooltip]:not([data-tooltip-pos]):focus-visible::after,
+  [data-tooltip][data-tooltip-pos="top"]:hover::after,
+  [data-tooltip][data-tooltip-pos="top"]:focus-visible::after {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  [data-tooltip]:not([data-tooltip-pos]):hover::before,
+  [data-tooltip]:not([data-tooltip-pos]):focus-visible::before,
+  [data-tooltip][data-tooltip-pos="top"]:hover::before,
+  [data-tooltip][data-tooltip-pos="top"]:focus-visible::before {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  [data-tooltip][data-tooltip-pos="bottom"]:hover::after,
+  [data-tooltip][data-tooltip-pos="bottom"]:focus-visible::after,
+  [data-tooltip][data-tooltip-pos="bottom"]:hover::before,
+  [data-tooltip][data-tooltip-pos="bottom"]:focus-visible::before {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  [data-tooltip][data-tooltip-pos="left"]:hover::after,
+  [data-tooltip][data-tooltip-pos="left"]:focus-visible::after,
+  [data-tooltip][data-tooltip-pos="left"]:hover::before,
+  [data-tooltip][data-tooltip-pos="left"]:focus-visible::before {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  [data-tooltip][data-tooltip-pos="right"]:hover::after,
+  [data-tooltip][data-tooltip-pos="right"]:focus-visible::after,
+  [data-tooltip][data-tooltip-pos="right"]:hover::before,
+  [data-tooltip][data-tooltip-pos="right"]:focus-visible::before {
+    transform: translateY(-50%) translateX(0);
+  }
 `;
