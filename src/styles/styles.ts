@@ -506,6 +506,13 @@ export const styles = css`
     top: 5%;
     right: 5%;
   }
+  .secondary-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+  }
   .secondary-icon {
     width: 40px;
     height: 40px;

@@ -235,9 +235,11 @@ describe('ApplianceCard rendering', () => {
 
     await element.updateComplete;
 
+    const alarmWrapper = element.shadowRoot?.querySelector('.secondary-icon-wrapper');
+    expect(alarmWrapper).toBeTruthy();
+    expect(alarmWrapper?.getAttribute('data-tooltip')).toBe('Door Open / Latch Error: DC');
     const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
     expect(alarmIcon).toBeTruthy();
-    expect(alarmIcon?.getAttribute('data-tooltip')).toBe('Door Open / Latch Error: DC');
   });
 
   it('should render secondary rinse aid alarm icon for dishwasher', async () => {
@@ -261,9 +263,11 @@ describe('ApplianceCard rendering', () => {
 
     await element.updateComplete;
 
+    const alarmWrapper = element.shadowRoot?.querySelector('.secondary-icon-wrapper');
+    expect(alarmWrapper).toBeTruthy();
+    expect(alarmWrapper?.getAttribute('data-tooltip')).toBe('Rinse Aid Empty / Low: RINSE_AID_EMPTY');
     const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
     expect(alarmIcon).toBeTruthy();
-    expect(alarmIcon?.getAttribute('data-tooltip')).toBe('Rinse Aid Empty / Low: RINSE_AID_EMPTY');
   });
 
   it('should render the card with cooktop configuration and burner status elements', async () => {
