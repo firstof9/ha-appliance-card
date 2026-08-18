@@ -153,8 +153,8 @@ export class ApplianceCard extends LitElement {
     return undefined;
   }
 
-  private _formatCountdown(timeStr: string, unit?: string): string {
-    return formatCountdown(timeStr, this._currentTime, unit);
+  private _formatCountdown(timeStr: string): string {
+    return formatCountdown(timeStr, this._currentTime);
   }
 
   protected override render(): TemplateResult | void {
