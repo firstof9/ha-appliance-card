@@ -183,6 +183,10 @@ export const styles = css`
     display: inline-block;
     z-index: 2;
   }
+  .refrigerator .appliance-container:hover,
+  .refrigerator .appliance-container:has([data-tooltip]:hover) {
+    z-index: 1000;
+  }
 
   .refrigerator .appliance-img {
     height: 100%;
@@ -885,12 +889,18 @@ export const styles = css`
   }
 
   /* Hover & Focus Interactions */
+  [data-tooltip]:hover,
+  [data-tooltip]:focus-visible {
+    z-index: 1000 !important;
+  }
+
   [data-tooltip]:hover::before,
   [data-tooltip]:hover::after,
   [data-tooltip]:focus-visible::before,
   [data-tooltip]:focus-visible::after {
     opacity: 1;
     visibility: visible;
+    z-index: 10000;
   }
 
   [data-tooltip]:not([data-tooltip-pos]):hover::after,
