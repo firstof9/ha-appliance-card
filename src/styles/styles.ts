@@ -752,8 +752,10 @@ export const styles = css`
   }
 
   /* Modern Tooltip Styling */
-  [data-tooltip] {
+  [data-tooltip]:not(.door-overlay):not(.burner-sync-badge) {
     position: relative;
+  }
+  [data-tooltip] {
     cursor: pointer;
   }
 
