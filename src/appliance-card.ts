@@ -785,6 +785,8 @@ export class ApplianceCard extends LitElement {
                       <div
                         class="door-overlay door-${door.position} ${door.isOpen ? 'open' : 'closed'}"
                         data-tooltip="${door.label}: ${door.isOpen ? 'Open' : 'Closed'}"
+                        role="img"
+                        aria-label="${door.label}: ${door.isOpen ? 'Open' : 'Closed'}"
                       ></div>
                     `,
                   )}
