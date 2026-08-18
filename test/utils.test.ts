@@ -12,10 +12,32 @@ describe('formatCountdown', () => {
 
   it('should return the string if it is already a duration', () => {
     expect(formatCountdown('00:10:00', mockCurrentTime)).toBe('00:10:00');
-    expect(formatCountdown('1:30', mockCurrentTime)).toBe('1:30');
+    expect(formatCountdown('1:30:00', mockCurrentTime)).toBe('01:30:00');
+    expect(formatCountdown('1:30', mockCurrentTime)).toBe('00:01:30');
+    expect(formatCountdown('25:00', mockCurrentTime)).toBe('00:25:00');
   });
 
-  it('should calculate the difference correctly', () => {
+  it('should parse human readable duration strings', () => {
+    expect(formatCountdown('1h 30m', mockCurrentTime)).toBe('01:30:00');
+    expect(formatCountdown('45 mins', mockCurrentTime)).toBe('00:45:00');
+    expect(formatCountdown('2 hours', mockCurrentTime)).toBe('02:00:00');
+    expect(formatCountdown('90 sec', mockCurrentTime)).toBe('00:01:30');
+    expect(formatCountdown('1hr 15min 20sec', mockCurrentTime)).toBe('01:15:20');
+  });
+
+  it('should parse raw numbers and handle unit of measurement', () => {
+    // Default number is seconds
+    expect(formatCountdown(3665, mockCurrentTime)).toBe('01:01:05');
+    expect(formatCountdown('1800', mockCurrentTime)).toBe('00:30:00');
+    
+    // Minutes unit
+    expect(formatCountdown('45', mockCurrentTime, 'min')).toBe('00:45:00');
+    expect(formatCountdown(90, mockCurrentTime, 'minutes')).toBe('01:30:00');
+    expect(formatCountdown('1.5', mockCurrentTime, 'hours')).toBe('01:30:00');
+    expect(formatCountdown('5000', mockCurrentTime, 'ms')).toBe('00:00:05');
+  });
+
+  it('should calculate the difference correctly for ISO dates', () => {
     const targetTime = new Date('2026-05-12T16:10:05Z').toISOString();
     expect(formatCountdown(targetTime, mockCurrentTime)).toBe('00:10:05');
   });
@@ -25,8 +47,10 @@ describe('formatCountdown', () => {
     expect(formatCountdown(pastTime, mockCurrentTime)).toBe('00:00:00');
   });
 
-  it('should return --:--:-- for invalid dates', () => {
+  it('should return --:--:-- for invalid dates or strings', () => {
     expect(formatCountdown('not-a-date', mockCurrentTime)).toBe('--:--:--');
+    expect(formatCountdown(null as any, mockCurrentTime)).toBe('--:--:--');
+    expect(formatCountdown(undefined as any, mockCurrentTime)).toBe('--:--:--');
   });
 });
 

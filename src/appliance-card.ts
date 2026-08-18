@@ -142,8 +142,8 @@ export class ApplianceCard extends LitElement {
     return true;
   }
 
-  private _formatCountdown(timeStr: string): string {
-    return formatCountdown(timeStr, this._currentTime);
+  private _formatCountdown(timeStr: string, unit?: string): string {
+    return formatCountdown(timeStr, this._currentTime, unit);
   }
 
   protected override render(): TemplateResult | void {
@@ -169,7 +169,8 @@ export class ApplianceCard extends LitElement {
     
     const activeMode = (isJobGeneric && (this.config.appliance_type === 'microwave' || this.config.appliance_type === 'oven')) ? rawModeState : rawJobState;
     const isPoweredOff = powerStateObj?.state === 'off';
-    const timeState = (timeStateObj && !isPoweredOff) ? this._formatCountdown(timeStateObj.state) : '--:--:--';
+    const timeUnit = timeStateObj?.attributes?.unit_of_measurement as string | undefined;
+    const timeState = (timeStateObj && !isPoweredOff) ? this._formatCountdown(timeStateObj.state, timeUnit) : '--:--:--';
 
     const tempStateObj = this.config.temperature_entity ? this.hass.states[this.config.temperature_entity] : null;
     const isMicrowave = this.config.appliance_type === 'microwave';
