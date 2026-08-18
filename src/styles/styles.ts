@@ -2,7 +2,7 @@ import { css } from 'lit';
 
 export const styles = css`
   ha-card {
-    overflow: hidden;
+    overflow: visible;
   }
   .container {
     position: relative;
@@ -11,7 +11,7 @@ export const styles = css`
     min-height: 180px;
     background: #1c1c1c;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     user-select: none;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
@@ -22,8 +22,10 @@ export const styles = css`
     left: 0;
     width: 100%;
     height: 100%;
+    border-radius: 12px;
     background: radial-gradient(circle at 30% 50%, var(--bg-color-primary, #3d3d3d) 0%, #2a2a2a 70%);
     z-index: 0;
+    overflow: hidden;
   }
 
   .appliance-img {
@@ -820,8 +822,24 @@ export const styles = css`
     border-top-color: rgba(28, 28, 28, 0.92);
   }
 
-  /* Secondary Icons row defaults to bottom placement so it never clips at the top card boundary */
-  .secondary-icons [data-tooltip]:not([data-tooltip-pos])::after,
+  /* Door overlay on left side of card: tooltip positions to right / top-right */
+  .door-overlay[data-tooltip]::after {
+    bottom: auto;
+    top: 50%;
+    left: calc(100% + 10px);
+    transform: translateY(-50%) translateX(-4px);
+  }
+
+  .door-overlay[data-tooltip]::before {
+    bottom: auto;
+    top: 50%;
+    left: calc(100% + 4px);
+    transform: translateY(-50%) translateX(-4px);
+    border-top-color: transparent;
+    border-right-color: rgba(28, 28, 28, 0.92);
+  }
+
+  /* Bottom Position */
   [data-tooltip][data-tooltip-pos="bottom"]::after {
     bottom: auto;
     top: calc(100% + 7px);
@@ -829,7 +847,6 @@ export const styles = css`
     transform: translateX(-50%) translateY(-4px);
   }
 
-  .secondary-icons [data-tooltip]:not([data-tooltip-pos])::before,
   [data-tooltip][data-tooltip-pos="bottom"]::before {
     bottom: auto;
     top: calc(100% + 2px);
@@ -890,12 +907,15 @@ export const styles = css`
     transform: translateX(-50%) translateY(0);
   }
 
-  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):hover::after,
-  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):focus-visible::after,
+  .door-overlay[data-tooltip]:hover::after,
+  .door-overlay[data-tooltip]:focus-visible::after,
+  .door-overlay[data-tooltip]:hover::before,
+  .door-overlay[data-tooltip]:focus-visible::before {
+    transform: translateY(-50%) translateX(0);
+  }
+
   [data-tooltip][data-tooltip-pos="bottom"]:hover::after,
   [data-tooltip][data-tooltip-pos="bottom"]:focus-visible::after,
-  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):hover::before,
-  .secondary-icons [data-tooltip]:not([data-tooltip-pos]):focus-visible::before,
   [data-tooltip][data-tooltip-pos="bottom"]:hover::before,
   [data-tooltip][data-tooltip-pos="bottom"]:focus-visible::before {
     transform: translateX(-50%) translateY(0);
