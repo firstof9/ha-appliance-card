@@ -54,6 +54,8 @@ export interface ApplianceCardConfig {
   burner_right_front_power_entity?: string;
   burner_right_rear_power_entity?: string;
   sabbath_mode_entity?: string;
+  stage_map?: Record<string, string>;
+  mode_map?: Record<string, string>;
   appliance_image?: string;
   background_color?: string;
   state_images?: Record<string, string>;

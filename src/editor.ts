@@ -234,6 +234,8 @@ export class ApplianceCardEditor extends LitElement {
     const footerSchema = [
       { name: 'appliance_image', label: 'Appliance Image Path (Optional)', selector: { text: {} } },
       { name: 'background_color', label: 'Background Color (Optional)', selector: { color_rgb: {} } },
+      { name: 'stage_map', label: 'Custom Stage Mappings (Optional Object: { "sensor_state": "card_stage" })', selector: { object: {} } },
+      { name: 'mode_map', label: 'Custom Mode Mappings (Optional Object: { "sensor_state": "card_mode" })', selector: { object: {} } },
     ];
 
     let finalSchema: any[] = [...baseSchema];

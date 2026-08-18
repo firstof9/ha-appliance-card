@@ -142,8 +142,19 @@ export class ApplianceCard extends LitElement {
     return true;
   }
 
-  private _formatCountdown(timeStr: string): string {
-    return formatCountdown(timeStr, this._currentTime);
+  private _findInMap(map: Record<string, string>, key: string): string | undefined {
+    if (!map || !key) return undefined;
+    const lowerKey = key.toLowerCase();
+    for (const [mapKey, mapVal] of Object.entries(map)) {
+      if (mapKey.toLowerCase() === lowerKey) {
+        return mapVal;
+      }
+    }
+    return undefined;
+  }
+
+  private _formatCountdown(timeStr: string, unit?: string): string {
+    return formatCountdown(timeStr, this._currentTime, unit);
   }
 
   protected override render(): TemplateResult | void {
@@ -163,8 +174,19 @@ export class ApplianceCard extends LitElement {
     }
 
     // Active mode logic (prioritize job state, but fallback to mode if job state is idle/others for microwave only)
-    const rawJobState = jobStateObj?.state?.toLowerCase() || 'off';
-    const rawModeState = modeStateObj?.state?.toLowerCase() || 'off';
+    let rawJobState = jobStateObj?.state?.toLowerCase() || 'off';
+    let rawModeState = modeStateObj?.state?.toLowerCase() || 'off';
+
+    // Apply custom stage_map and mode_map if configured
+    if (this.config.stage_map) {
+      const mapped = this._findInMap(this.config.stage_map, rawJobState);
+      if (mapped) rawJobState = mapped.toLowerCase();
+    }
+    if (this.config.mode_map) {
+      const mapped = this._findInMap(this.config.mode_map, rawModeState);
+      if (mapped) rawModeState = mapped.toLowerCase();
+    }
+
     const isJobGeneric = ['none', 'others', 'off', 'unknown', 'unavailable', 'idle', 'running', 'cooking'].includes(rawJobState);
     
     const activeMode = (isJobGeneric && (this.config.appliance_type === 'microwave' || this.config.appliance_type === 'oven')) ? rawModeState : rawJobState;
