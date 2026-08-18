@@ -513,7 +513,9 @@ export const styles = css`
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
   }
   .secondary-icon.alarm {
-    --mdc-icon-size: 32px;
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
     color: #f44336;
     animation: alarm-blink 1.5s ease-in-out infinite;
   }

@@ -237,7 +237,33 @@ describe('ApplianceCard rendering', () => {
 
     const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
     expect(alarmIcon).toBeTruthy();
-    expect(alarmIcon?.getAttribute('title')).toBe('Alarm Code: DC');
+    expect(alarmIcon?.getAttribute('title')).toBe('Door Open / Latch Error: DC');
+  });
+
+  it('should render secondary rinse aid alarm icon for dishwasher', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.dishwasher_alarm_code': {
+          state: 'RINSE_AID_EMPTY',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'dishwasher',
+      alarm_code_entity: 'sensor.dishwasher_alarm_code',
+    });
+    element.hass = hass as any;
+
+    await element.updateComplete;
+
+    const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
+    expect(alarmIcon).toBeTruthy();
+    expect(alarmIcon?.getAttribute('title')).toBe('Rinse Aid Empty / Low: RINSE_AID_EMPTY');
   });
 
   it('should render the card with cooktop configuration and burner status elements', async () => {
