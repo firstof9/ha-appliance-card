@@ -238,6 +238,8 @@ describe('ApplianceCard rendering', () => {
     const alarmWrapper = element.shadowRoot?.querySelector('.secondary-icon-wrapper');
     expect(alarmWrapper).toBeTruthy();
     expect(alarmWrapper?.getAttribute('data-tooltip')).toBe('Door Open / Latch Error: DC');
+    expect(alarmWrapper?.getAttribute('role')).toBe('img');
+    expect(alarmWrapper?.getAttribute('aria-label')).toBe('Door Open / Latch Error: DC');
     const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
     expect(alarmIcon).toBeTruthy();
   });
