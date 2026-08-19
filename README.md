@@ -91,61 +91,73 @@ For manual YAML configuration:
 | `light_entity` | string | **Optional** | The entity ID for the microwave light toggle. |
 | `temperature_entity` | string | **Optional** | The entity ID for the cooking temperature sensor. |
 
-### Kettle Specific Options
-
-Kettles have no kettle-only configuration keys — they use the shared options above. What matters is **which entity drives the brew-stage icon** and **what values that entity reports**.
-
+### Cooktop Specific Options
 | Name | Type | Requirement | Description |
 | --- | --- | --- | --- |
-| `job_state_entity` | string | **Recommended** | Drives the brew-stage icon (boil / coffee / tea). See the note below. |
-| `temperature_entity` | string | **Optional** | Current water temperature, shown on the 7-segment readout. |
-| `power_entity` | string | **Optional** | The kettle's power switch. |
-| `time_entity` | string | **Optional** | Remaining time, if your integration exposes one. |
+| `burner_<position>_on_entity` | string | **Optional** | Binary sensor for burner flame/power state. |
+| `burner_<position>_power_entity` | string | **Optional** | Sensor for burner power percentage (0-100%). |
+| `burner_<position>_sync_entity` | string | **Optional** | Binary sensor for burner synchronization. |
+| `sabbath_mode_entity` | string | **Optional** | Switch or binary sensor for Sabbath mode. |
 
-> [!IMPORTANT]
-> For `microwave` and `oven`, the card falls back to `mode_entity` when `job_state_entity` reports a generic value. **Kettles do not get that fallback** — the stage icon is read from `job_state_entity` only. A kettle configured with just `mode_entity` will sit on the idle icon forever.
-
-#### Recognized stage values
-
-`job_state_entity` is lowercased and matched by **prefix** against:
-
-| Value | Icon |
-| --- | --- |
-| `boiling`, `boil`, `black_tea_boil` | boil |
-| `coffee` | coffee |
-| `green_tea`, `oolong_tea`, `tea` | tea |
-| `keep_warm`, `warm` | boil |
-
-These values are treated as idle: `none`, `off`, `unknown`, `unavailable`, `idle`, `standby`.
-
-#### Mapping values from your integration
-
-Most kettle integrations do not report these exact strings. `stage_map` translates your entity's raw values onto the names above.
-
+### Template & Virtual Appliance Options
 | Name | Type | Requirement | Description |
 | --- | --- | --- | --- |
-| `stage_map` | map | **Optional** | Maps raw `job_state_entity` values to recognized stage names. Keys are compared case-insensitively against the **whole** state string, not a prefix. |
-| `mode_map` | map | **Optional** | The same, for `mode_entity` (microwave / oven). |
+| `stage_map` | object | **Optional** | Key-value mapping from custom sensor state strings to card stages (e.g. `soaking: wash`). |
+| `mode_map` | object | **Optional** | Key-value mapping from custom sensor state strings to card modes. |
+| `time_template` | string | **Optional** | Jinja2 template rendering live time remaining or duration (e.g. `{{ states('sensor.washer_secs') }}`). |
+| `job_state_template` | string | **Optional** | Jinja2 template rendering active job/cycle state. |
+| `mode_template` | string | **Optional** | Jinja2 template rendering active appliance mode. |
+| `power_template` | string | **Optional** | Jinja2 template returning `on` or `off` for power state. |
+| `temperature_template` | string | **Optional** | Jinja2 template returning temperature value. |
+| `alarm_code_template` | string | **Optional** | Jinja2 template returning alarm/fault code. |
 
-#### Example: Govee Smart Kettle (H7170)
+---
 
-The Govee integration reports work modes such as `Black Tea/Boil` and `Green Tea`. These use spaces and a slash rather than the underscored stage names, so none of them match without a `stage_map`:
+## Template & Virtual Appliance Examples
 
+`ha-appliance-card` supports non-smart appliances and custom integrations (ESPHome, Shelly, Tuya, Bosch, Miele, MQTT, Virtual Helper Sensors) using flexible duration parsers, stage mapping, and live Jinja2 template evaluation.
+
+### Example 1: Template Washer with Stage Mapping & Seconds Timer
 ```yaml
 type: custom:appliance-card
-appliance_type: kettle
-device_id: 1234567890abcdef1234567890abcdef
-power_entity: switch.smart_kettle_power_switch
-job_state_entity: select.smart_kettle_mode
-temperature_entity: sensor.smart_kettle_temperature
-machine_state_entity: sensor.smart_kettle_status
+appliance_type: washer
+job_state_entity: sensor.template_washer_status
+time_entity: sensor.template_washer_seconds_remaining
 stage_map:
-  Black Tea/Boil: black_tea_boil
-  Green Tea: green_tea
-  Oolong Tea: oolong_tea
-  Coffee: coffee
-  DIY: boil
+  soaking: weight_sensing
+  filling: wash
+  washing: wash
+  deep_rinse: rinse
+  extracting: spin
 ```
+
+### Example 2: Jinja2 Live Template Expressions
+```yaml
+type: custom:appliance-card
+appliance_type: dryer
+power_template: "{{ 'on' if is_state('sensor.dryer_power', 'running') else 'off' }}"
+job_state_template: >
+  {% if is_state('sensor.dryer_phase', 'drying') %}
+    dry
+  {% elif is_state('sensor.dryer_phase', 'cooling') %}
+    cool
+  {% else %}
+    off
+  {% endif %}
+time_template: "{{ states('sensor.dryer_remaining_minutes') | int * 60 }}"
+```
+
+### Example 3: Flexible Time Formats
+The `time_entity` and `time_template` automatically parse:
+- **Raw Seconds**: `3600` &rarr; `01:00:00`
+- **Units of Measurement**: `45` with unit `min` &rarr; `00:45:00`
+- **Human Formatted Strings**: `"1h 25m"`, `"45 mins"`, `"90 sec"`
+- **Standard Durations**: `"01:15:00"`, `"25:00"` (MM:SS &rarr; 00:25:00)
+- **ISO Target Timestamps**: `"2026-08-18T16:30:00Z"` &rarr; Live countdown
+
+### Kettle Specific Options
+
+Kettles have no kettle-only configuration keys. The stage icon is driven by `job_state_entity`; `stage_map` can translate integration-specific values such as `Black Tea/Boil` and `Green Tea` to recognized stages. Kettles do not use the microwave/oven `mode_entity` fallback.
 
 ## Themes
 
