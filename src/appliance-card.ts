@@ -705,7 +705,7 @@ export class ApplianceCard extends LitElement {
               <ha-icon
                 class="secondary-icon sabbath active"
                 icon="mdi:star-david"
-                title="Sabbath Mode On"
+                data-tooltip="Sabbath Mode On"
                 style="color: #9c27b0;"
               ></ha-icon>
             `
@@ -718,6 +718,7 @@ export class ApplianceCard extends LitElement {
               <img
                 class="secondary-icon wifi ${wifiState.state === 'on' ? 'active' : ''}"
                 src="${this._getAsset(appliance, wifiState.state === 'on' ? 'wifi-on.png' : 'wifi.png')}"
+                data-tooltip="Wi-Fi: ${wifiState.state === 'on' ? 'Connected' : 'Disconnected'}"
               />
             `
           : ''}
@@ -726,6 +727,7 @@ export class ApplianceCard extends LitElement {
               <img
                 class="secondary-icon lock ${lockState.state === 'on' ? 'active' : ''}"
                 src="${this._getAsset(appliance, lockState.state === 'on' ? 'lock-on.png' : 'lock.png')}"
+                data-tooltip="Control Lock: ${lockState.state === 'on' ? 'Locked' : 'Unlocked'}"
               />
             `
           : ''}
@@ -827,7 +829,7 @@ export class ApplianceCard extends LitElement {
                       </svg>
                       ${isSynced
                         ? html`
-                            <div class="burner-sync-badge" title="Synchronized">
+                            <div class="burner-sync-badge" data-tooltip="Synchronized">
                               <ha-icon icon="mdi:link-variant"></ha-icon>
                             </div>
                           `
@@ -895,7 +897,9 @@ export class ApplianceCard extends LitElement {
                     (door) => html`
                       <div
                         class="door-overlay door-${door.position} ${door.isOpen ? 'open' : 'closed'}"
-                        title="${door.label}: ${door.isOpen ? 'Open' : 'Closed'}"
+                        data-tooltip="${door.label}: ${door.isOpen ? 'Open' : 'Closed'}"
+                        role="img"
+                        aria-label="${door.label}: ${door.isOpen ? 'Open' : 'Closed'}"
                       ></div>
                     `,
                   )}
@@ -932,7 +936,7 @@ export class ApplianceCard extends LitElement {
                 <div class="filter-status">
                   <div class="filter-label-row">
                     <span class="filter-label" style="color: ${this._getFilterColor(filterStatus.state)}">Water Filter</span>
-                    <button class="reset-btn-mini" @click=${this._resetFilter} title="Reset Filter">
+                    <button class="reset-btn-mini" @click=${this._resetFilter} data-tooltip="Reset Filter">
                       <ha-icon icon="mdi:restart"></ha-icon>
                     </button>
                   </div>
