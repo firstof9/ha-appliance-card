@@ -83,7 +83,9 @@ describe('getAsset', () => {
   });
 
   it('should return a fallback path if asset is not found', () => {
+    // HACS installs this repo to www/community/ha-appliance-card, so the
+    // pre-rename ha-smartthings-card directory can never resolve.
     const result = getAsset('unknown', 'missing.png');
-    expect(result).toBe('/local/community/ha-smartthings-card/images/unknown/missing.png');
+    expect(result).toBe('/local/community/ha-appliance-card/images/unknown/missing.png');
   });
 });
