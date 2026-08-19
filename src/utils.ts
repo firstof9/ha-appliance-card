@@ -99,5 +99,17 @@ export function getFilterColor(state: string): string {
 export function getAsset(appliance: string, filename: string): string {
   const asset = ASSETS[appliance]?.[filename];
   if (asset) return asset;
-  return `/local/community/ha-smartthings-card/images/${appliance}/${filename}`;
+
+  // Not every appliance ships a highlighted "-on" variant for each stage icon
+  // (kettle ships none). Fall back to the base icon rather than emitting a path
+  // that 404s -- `.job-icon-container.active` already applies the glow and
+  // scale, so the active state stays visually distinct. A real "-on" asset
+  // takes precedence automatically once one is added.
+  const onVariant = filename.match(/^(.*)-on(\.[^.]+)$/);
+  if (onVariant) {
+    const base = ASSETS[appliance]?.[`${onVariant[1]}${onVariant[2]}`];
+    if (base) return base;
+  }
+
+  return `/local/community/ha-appliance-card/images/${appliance}/${filename}`;
 }
