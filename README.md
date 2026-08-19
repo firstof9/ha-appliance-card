@@ -1,6 +1,6 @@
 # Appliance Card
 
-A custom Home Assistant card for tracking and controlling home appliances (SmartThings, LocalThings, etc.).
+A custom Home Assistant card for tracking and controlling home appliances — refrigerators, microwaves, ovens, cooktops, dishwashers, washers, dryers and kettles — from SmartThings, LocalThings and others.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=firstof9&repository=ha-appliance-card&category=plugin)
 
@@ -70,7 +70,7 @@ For manual YAML configuration:
 | `machine_state_entity` | string | **Optional** | The entity ID for the machine state. |
 | `job_state_entity` | string | **Optional** | The entity ID for the current job state. |
 | `time_entity` | string | **Optional** | The entity ID for completion time or time remaining (supports live countdown). |
-| `temperature_entity` | string | **Optional** | The entity ID for real-time temperature monitoring (Microwave/Oven). |
+| `temperature_entity` | string | **Optional** | The entity ID for real-time temperature monitoring (Microwave/Oven/Kettle). |
 | `wifi_entity` | string | **Optional** | The entity ID for WiFi connection status. |
 | `lock_entity` | string | **Optional** | The entity ID for child lock status. |
 
@@ -154,6 +154,10 @@ The `time_entity` and `time_template` automatically parse:
 - **Human Formatted Strings**: `"1h 25m"`, `"45 mins"`, `"90 sec"`
 - **Standard Durations**: `"01:15:00"`, `"25:00"` (MM:SS &rarr; 00:25:00)
 - **ISO Target Timestamps**: `"2026-08-18T16:30:00Z"` &rarr; Live countdown
+
+### Kettle Specific Options
+
+Kettles have no kettle-only configuration keys. The stage icon is driven by `job_state_entity`; `stage_map` can translate integration-specific values such as `Black Tea/Boil` and `Green Tea` to recognized stages. Kettles do not use the microwave/oven `mode_entity` fallback.
 
 ## Themes
 
