@@ -270,13 +270,17 @@ export class ApplianceCard extends LitElement {
     const isJobGeneric = ['none', 'others', 'off', 'unknown', 'unavailable', 'idle', 'running', 'cooking'].includes(rawJobState);
     
     const activeMode = (isJobGeneric && (this.config.appliance_type === 'microwave' || this.config.appliance_type === 'oven')) ? rawModeState : rawJobState;
-
+    const isIdle = ['none', 'off', 'unknown', 'unavailable', 'idle', 'standby'].includes(activeMode);
     const rawTimeValue = this._templateResults['time_template'] !== undefined
       ? this._templateResults['time_template']
       : timeStateObj?.state;
-
     const timeUnit = timeStateObj?.attributes?.unit_of_measurement as string | undefined;
-    const timeState = (rawTimeValue && !isPoweredOff) ? this._formatCountdown(rawTimeValue, timeUnit) : '--:--:--';
+    // Some integrations expose power_entity as a write-only command switch that
+    // still reads "off" while the appliance is mid-cycle. Only suppress a
+    // countdown when power is off and the appliance is also genuinely idle.
+    const timeState = (rawTimeValue && !(isPoweredOff && isIdle))
+      ? this._formatCountdown(rawTimeValue, timeUnit)
+      : '--:--:--';
 
     const tempStateObj = this.config.temperature_entity ? this.hass.states[this.config.temperature_entity] : null;
     const rawTempValue = this._templateResults['temperature_template'] !== undefined
@@ -284,7 +288,6 @@ export class ApplianceCard extends LitElement {
       : tempStateObj?.state;
 
     const isMicrowave = this.config.appliance_type === 'microwave';
-    const isIdle = ['none', 'off', 'unknown', 'unavailable', 'idle', 'standby'].includes(activeMode);
     const tempValue = rawTempValue !== undefined && rawTempValue !== null && rawTempValue !== ''
       ? isMicrowave && (isIdle || isPoweredOff)
         ? '---'
