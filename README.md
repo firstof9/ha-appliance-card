@@ -1,6 +1,6 @@
 # Appliance Card
 
-A custom Home Assistant card for tracking and controlling home appliances (SmartThings, LocalThings, etc.).
+A custom Home Assistant card for tracking and controlling home appliances — refrigerators, microwaves, ovens, cooktops, dishwashers, washers, dryers and kettles — from SmartThings, LocalThings and others.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=firstof9&repository=ha-appliance-card&category=plugin)
 
