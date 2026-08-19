@@ -21,6 +21,8 @@ export class ApplianceCard extends LitElement {
 
   @state() private config!: ApplianceCardConfig;
   @state() private _currentTime = new Date().getTime();
+  @state() private _templateResults: Record<string, string> = {};
+  private _templateUnsub: Record<string, () => Promise<void>> = {};
   private _timer?: number;
 
   public static getConfigElement() {
@@ -74,6 +76,8 @@ export class ApplianceCard extends LitElement {
     if (!this.config.appliance_type) {
       this.config.appliance_type = 'microwave';
     }
+
+    this._subscribeTemplates();
   }
 
   override connectedCallback() {
@@ -81,6 +85,7 @@ export class ApplianceCard extends LitElement {
     this._timer = window.setInterval(() => {
       this._currentTime = new Date().getTime();
     }, 1000);
+    this._subscribeTemplates();
   }
 
   override disconnectedCallback() {
@@ -88,15 +93,84 @@ export class ApplianceCard extends LitElement {
     if (this._timer) {
       clearInterval(this._timer);
     }
+    this._unsubscribeTemplates();
+  }
+
+  private async _subscribeTemplates(): Promise<void> {
+    if (!this.hass?.connection || !this.config) return;
+
+    const templateKeys: (keyof ApplianceCardConfig)[] = [
+      'time_template',
+      'mode_template',
+      'job_state_template',
+      'machine_state_template',
+      'power_template',
+      'temperature_template',
+      'alarm_code_template',
+    ];
+
+    for (const key of templateKeys) {
+      const templateStr = this.config[key] as string | undefined;
+      if (!templateStr || typeof templateStr !== 'string') {
+        if (this._templateUnsub[key]) {
+          try {
+            await this._templateUnsub[key]();
+          } catch {
+            // ignore
+          }
+          delete this._templateUnsub[key];
+          delete this._templateResults[key];
+        }
+        continue;
+      }
+
+      // If already subscribed to the exact same template, skip
+      if (this._templateUnsub[key]) continue;
+
+      try {
+        const unsub = await this.hass.connection.subscribeMessage<any>(
+          (msg) => {
+            const val = msg?.result !== undefined ? String(msg.result) : '';
+            this._templateResults = {
+              ...this._templateResults,
+              [key]: val,
+            };
+          },
+          {
+            type: 'render_template',
+            template: templateStr,
+          }
+        );
+        this._templateUnsub[key] = unsub;
+      } catch (err) {
+        console.warn(`appliance-card: Error subscribing to ${key}:`, err);
+      }
+    }
+  }
+
+  private async _unsubscribeTemplates(): Promise<void> {
+    for (const key of Object.keys(this._templateUnsub)) {
+      try {
+        await this._templateUnsub[key]();
+      } catch {
+        // ignore
+      }
+    }
+    this._templateUnsub = {};
   }
 
   protected override shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('config')) {
+    if (changedProps.has('config') || changedProps.has('_templateResults')) {
       return true;
     }
 
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
     if (oldHass) {
+      // Re-trigger template subscriptions if hass connection changed
+      if (this.hass?.connection && !oldHass.connection) {
+        this._subscribeTemplates();
+      }
+
       const entities = [
         this.config.power_entity,
         this.config.mode_entity,
@@ -168,14 +242,20 @@ export class ApplianceCard extends LitElement {
     const jobStateObj = this.config.job_state_entity ? this.hass.states[this.config.job_state_entity] : null;
     const timeStateObj = this.config.time_entity ? this.hass.states[this.config.time_entity] : null;
 
-    // Power logic
-    if (machineStateObj && !powerStateObj) {
-      // Logic for background or overall state if needed
-    }
+    // Power logic (template override or entity state)
+    const powerValue = this._templateResults['power_template'] !== undefined
+      ? this._templateResults['power_template']
+      : powerStateObj?.state;
+    const isPoweredOff = powerValue?.toLowerCase() === 'off';
 
-    // Active mode logic (prioritize job state, but fallback to mode if job state is idle/others for microwave only)
-    let rawJobState = jobStateObj?.state?.toLowerCase() || 'off';
-    let rawModeState = modeStateObj?.state?.toLowerCase() || 'off';
+    // Active mode logic (prioritize templates if defined, then job state, then mode)
+    let rawJobState = (this._templateResults['job_state_template'] !== undefined
+      ? this._templateResults['job_state_template']
+      : jobStateObj?.state?.toLowerCase()) || 'off';
+
+    let rawModeState = (this._templateResults['mode_template'] !== undefined
+      ? this._templateResults['mode_template']
+      : modeStateObj?.state?.toLowerCase()) || 'off';
 
     // Apply custom stage_map and mode_map if configured
     if (this.config.stage_map) {
@@ -190,17 +270,25 @@ export class ApplianceCard extends LitElement {
     const isJobGeneric = ['none', 'others', 'off', 'unknown', 'unavailable', 'idle', 'running', 'cooking'].includes(rawJobState);
     
     const activeMode = (isJobGeneric && (this.config.appliance_type === 'microwave' || this.config.appliance_type === 'oven')) ? rawModeState : rawJobState;
-    const isPoweredOff = powerStateObj?.state === 'off';
+
+    const rawTimeValue = this._templateResults['time_template'] !== undefined
+      ? this._templateResults['time_template']
+      : timeStateObj?.state;
+
     const timeUnit = timeStateObj?.attributes?.unit_of_measurement as string | undefined;
-    const timeState = (timeStateObj && !isPoweredOff) ? this._formatCountdown(timeStateObj.state, timeUnit) : '--:--:--';
+    const timeState = (rawTimeValue && !isPoweredOff) ? this._formatCountdown(rawTimeValue, timeUnit) : '--:--:--';
 
     const tempStateObj = this.config.temperature_entity ? this.hass.states[this.config.temperature_entity] : null;
+    const rawTempValue = this._templateResults['temperature_template'] !== undefined
+      ? this._templateResults['temperature_template']
+      : tempStateObj?.state;
+
     const isMicrowave = this.config.appliance_type === 'microwave';
     const isIdle = ['none', 'off', 'unknown', 'unavailable', 'idle', 'standby'].includes(activeMode);
-    const tempValue = tempStateObj
+    const tempValue = rawTempValue !== undefined && rawTempValue !== null && rawTempValue !== ''
       ? isMicrowave && (isIdle || isPoweredOff)
         ? '---'
-        : Math.round(parseFloat(tempStateObj.state)).toString()
+        : Math.round(parseFloat(rawTempValue)).toString()
       : null;
     const tempUnit = tempStateObj?.attributes.unit_of_measurement || '°C';
 
@@ -588,18 +676,20 @@ export class ApplianceCard extends LitElement {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   }
-
   private _renderSecondaryIcons(): TemplateResult | void {
     const wifiState = this.config.wifi_entity ? this.hass.states[this.config.wifi_entity] : null;
     const lockState = this.config.lock_entity ? this.hass.states[this.config.lock_entity] : null;
     const alarmState = this.config.alarm_code_entity ? this.hass.states[this.config.alarm_code_entity] : null;
 
+    const rawAlarmCode = this._templateResults['alarm_code_template'] !== undefined
+      ? this._templateResults['alarm_code_template']
+      : (alarmState?.state ? String(alarmState.state) : '');
+
     const isAlarmActive =
-      alarmState &&
-      alarmState.state !== undefined &&
-      alarmState.state !== null &&
+      rawAlarmCode !== undefined &&
+      rawAlarmCode !== null &&
       !['off', 'none', '0', '0.0', 'normal', 'ok', 'unavailable', 'unknown', ''].includes(
-        String(alarmState.state).trim().toLowerCase(),
+        String(rawAlarmCode).trim().toLowerCase(),
       );
 
     const sabbathState = this.config.sabbath_mode_entity ? this.hass.states[this.config.sabbath_mode_entity] : null;
@@ -621,7 +711,7 @@ export class ApplianceCard extends LitElement {
             `
           : ''}
         ${isAlarmActive
-          ? getAlarmIcon(String(alarmState!.state), appliance).svgTemplate
+          ? getAlarmIcon(rawAlarmCode, appliance).svgTemplate
           : ''}
         ${wifiState
           ? html`
