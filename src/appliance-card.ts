@@ -191,12 +191,19 @@ export class ApplianceCard extends LitElement {
     
     const activeMode = (isJobGeneric && (this.config.appliance_type === 'microwave' || this.config.appliance_type === 'oven')) ? rawModeState : rawJobState;
     const isPoweredOff = powerStateObj?.state === 'off';
+    const isIdle = ['none', 'off', 'unknown', 'unavailable', 'idle', 'standby'].includes(activeMode);
     const timeUnit = timeStateObj?.attributes?.unit_of_measurement as string | undefined;
-    const timeState = (timeStateObj && !isPoweredOff) ? this._formatCountdown(timeStateObj.state, timeUnit) : '--:--:--';
+    // Some integrations expose power_entity as a write-only command switch that
+    // still reads "off" while the appliance is mid-cycle -- LG ThinQ does this on
+    // washers and dryers. Blanking the countdown on power alone therefore hides a
+    // perfectly good remaining time, so require the appliance to also be reporting
+    // an idle state before we suppress it.
+    const timeState = (timeStateObj && !(isPoweredOff && isIdle))
+      ? this._formatCountdown(timeStateObj.state, timeUnit)
+      : '--:--:--';
 
     const tempStateObj = this.config.temperature_entity ? this.hass.states[this.config.temperature_entity] : null;
     const isMicrowave = this.config.appliance_type === 'microwave';
-    const isIdle = ['none', 'off', 'unknown', 'unavailable', 'idle', 'standby'].includes(activeMode);
     const tempValue = tempStateObj
       ? isMicrowave && (isIdle || isPoweredOff)
         ? '---'
