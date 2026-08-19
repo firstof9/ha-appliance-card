@@ -70,7 +70,7 @@ For manual YAML configuration:
 | `machine_state_entity` | string | **Optional** | The entity ID for the machine state. |
 | `job_state_entity` | string | **Optional** | The entity ID for the current job state. |
 | `time_entity` | string | **Optional** | The entity ID for completion time or time remaining (supports live countdown). |
-| `temperature_entity` | string | **Optional** | The entity ID for real-time temperature monitoring (Microwave/Oven). |
+| `temperature_entity` | string | **Optional** | The entity ID for real-time temperature monitoring (Microwave/Oven/Kettle). |
 | `wifi_entity` | string | **Optional** | The entity ID for WiFi connection status. |
 | `lock_entity` | string | **Optional** | The entity ID for child lock status. |
 
@@ -90,6 +90,62 @@ For manual YAML configuration:
 | `fan_entity` | string | **Optional** | The entity ID for the microwave fan (supports slider for `fan` or `number` entities). |
 | `light_entity` | string | **Optional** | The entity ID for the microwave light toggle. |
 | `temperature_entity` | string | **Optional** | The entity ID for the cooking temperature sensor. |
+
+### Kettle Specific Options
+
+Kettles have no kettle-only configuration keys — they use the shared options above. What matters is **which entity drives the brew-stage icon** and **what values that entity reports**.
+
+| Name | Type | Requirement | Description |
+| --- | --- | --- | --- |
+| `job_state_entity` | string | **Recommended** | Drives the brew-stage icon (boil / coffee / tea). See the note below. |
+| `temperature_entity` | string | **Optional** | Current water temperature, shown on the 7-segment readout. |
+| `power_entity` | string | **Optional** | The kettle's power switch. |
+| `time_entity` | string | **Optional** | Remaining time, if your integration exposes one. |
+
+> [!IMPORTANT]
+> For `microwave` and `oven`, the card falls back to `mode_entity` when `job_state_entity` reports a generic value. **Kettles do not get that fallback** — the stage icon is read from `job_state_entity` only. A kettle configured with just `mode_entity` will sit on the idle icon forever.
+
+#### Recognized stage values
+
+`job_state_entity` is lowercased and matched by **prefix** against:
+
+| Value | Icon |
+| --- | --- |
+| `boiling`, `boil`, `black_tea_boil` | boil |
+| `coffee` | coffee |
+| `green_tea`, `oolong_tea`, `tea` | tea |
+| `keep_warm`, `warm` | boil |
+
+These values are treated as idle: `none`, `off`, `unknown`, `unavailable`, `idle`, `standby`.
+
+#### Mapping values from your integration
+
+Most kettle integrations do not report these exact strings. `stage_map` translates your entity's raw values onto the names above.
+
+| Name | Type | Requirement | Description |
+| --- | --- | --- | --- |
+| `stage_map` | map | **Optional** | Maps raw `job_state_entity` values to recognized stage names. Keys are compared case-insensitively against the **whole** state string, not a prefix. |
+| `mode_map` | map | **Optional** | The same, for `mode_entity` (microwave / oven). |
+
+#### Example: Govee Smart Kettle (H7170)
+
+The Govee integration reports work modes such as `Black Tea/Boil` and `Green Tea`. These use spaces and a slash rather than the underscored stage names, so none of them match without a `stage_map`:
+
+```yaml
+type: custom:appliance-card
+appliance_type: kettle
+device_id: 1234567890abcdef1234567890abcdef
+power_entity: switch.smart_kettle_power_switch
+job_state_entity: select.smart_kettle_mode
+temperature_entity: sensor.smart_kettle_temperature
+machine_state_entity: sensor.smart_kettle_status
+stage_map:
+  Black Tea/Boil: black_tea_boil
+  Green Tea: green_tea
+  Oolong Tea: oolong_tea
+  Coffee: coffee
+  DIY: boil
+```
 
 ## Themes
 
