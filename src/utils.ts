@@ -1,18 +1,62 @@
 import { ASSETS } from './assets';
 
 /**
- * Formats a timestamp into a countdown string HH:MM:SS
+ * Formats a timestamp, numeric duration, or duration string into a countdown string HH:MM:SS
  */
-export function formatCountdown(timeStr: string, currentTime: number): string {
-  if (!timeStr || ['unavailable', 'unknown'].includes(timeStr.toLowerCase())) return '--:--:--';
-  
-  // If it's already a duration string like "00:10:00", just return it
-  if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(timeStr)) {
-    return timeStr;
+export function formatCountdown(timeVal: string | number, currentTime: number, unit?: string): string {
+  if (timeVal === undefined || timeVal === null) return '--:--:--';
+  const str = String(timeVal).trim();
+  if (!str || ['unavailable', 'unknown', 'none', 'null'].includes(str.toLowerCase())) return '--:--:--';
+
+  const cleanUnit = (unit || '').trim().toLowerCase();
+
+  // 1. Duration string matching: "HH:MM:SS", "H:MM:SS", "MM:SS", "M:SS"
+  const colonMatch = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if (colonMatch) {
+    if (colonMatch[3] !== undefined) {
+      // It has HH:MM:SS
+      const h = colonMatch[1].padStart(2, '0');
+      const m = colonMatch[2];
+      const s = colonMatch[3];
+      return `${h}:${m}:${s}`;
+    } else {
+      // It is MM:SS -> 00:MM:SS
+      const m = colonMatch[1].padStart(2, '0');
+      const s = colonMatch[2];
+      return `00:${m}:${s}`;
+    }
   }
 
-  const targetTime = new Date(timeStr).getTime();
-  // If invalid date, return '--:--:--'
+  // 2. Human-readable duration strings (e.g. "1h 30m 15s", "45 mins", "2 hours", "90 sec")
+  const humanDurationMatch = str.match(/^(?:(\d+)\s*(?:h|hr|hrs|hour|hours))?\s*(?:(\d+)\s*(?:m|min|mins|minute|minutes))?\s*(?:(\d+)\s*(?:s|sec|secs|second|seconds))?$/i);
+  if (humanDurationMatch && (humanDurationMatch[1] || humanDurationMatch[2] || humanDurationMatch[3])) {
+    const h = parseInt(humanDurationMatch[1] || '0', 10);
+    const m = parseInt(humanDurationMatch[2] || '0', 10);
+    const s = parseInt(humanDurationMatch[3] || '0', 10);
+    const totalSec = h * 3600 + m * 60 + s;
+    return secondsToHms(totalSec);
+  }
+
+  // 3. Numeric string or number (e.g. 3600, "1800", "45" with unit 'min')
+  if (/^\d+(?:\.\d+)?$/.test(str)) {
+    const num = parseFloat(str);
+    if (!isNaN(num)) {
+      if (cleanUnit === 'h' || cleanUnit === 'hr' || cleanUnit === 'hrs' || cleanUnit === 'hours') {
+        return secondsToHms(Math.round(num * 3600));
+      }
+      if (cleanUnit === 'min' || cleanUnit === 'm' || cleanUnit === 'mins' || cleanUnit === 'minutes') {
+        return secondsToHms(Math.round(num * 60));
+      }
+      if (cleanUnit === 'ms' || cleanUnit === 'milliseconds') {
+        return secondsToHms(Math.round(num / 1000));
+      }
+      // Default numeric without specific larger unit: treat as seconds
+      return secondsToHms(Math.round(num));
+    }
+  }
+
+  // 4. ISO or Date timestamp calculation (e.g. "2026-08-18T14:30:00Z")
+  const targetTime = new Date(str).getTime();
   if (isNaN(targetTime)) {
     return '--:--:--';
   }
@@ -22,7 +66,11 @@ export function formatCountdown(timeStr: string, currentTime: number): string {
     return '00:00:00';
   }
 
-  const totalSeconds = Math.floor(diff / 1000);
+  return secondsToHms(Math.floor(diff / 1000));
+}
+
+function secondsToHms(totalSeconds: number): string {
+  if (totalSeconds <= 0) return '00:00:00';
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;

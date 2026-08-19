@@ -214,6 +214,81 @@ describe('ApplianceCard rendering', () => {
     expect(img?.getAttribute('alt')).toBe('Sensing');
   });
 
+  it('should activate the correct stage when stage_map alias is configured', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.template_washer_state': {
+          state: 'soaking_clothes',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'washer',
+      job_state_entity: 'sensor.template_washer_state',
+      stage_map: {
+        soaking_clothes: 'wash',
+      },
+    });
+    element.hass = hass as any;
+
+    await element.updateComplete;
+
+    const activeIconContainer = element.shadowRoot?.querySelector('.job-icon-container.active');
+    expect(activeIconContainer).toBeTruthy();
+
+    const img = activeIconContainer?.querySelector('img.job-icon');
+    expect(img?.getAttribute('alt')).toBe('Wash');
+  });
+
+  it('should render evaluated template values from WebSocket subscription', async () => {
+    const callbacks: Record<string, Function> = {};
+
+    const hass = {
+      ...mockHass,
+      connection: {
+        subscribeMessage: vi.fn(async (cb: Function, params: any) => {
+          if (params.template === "{{ 'wash' }}") callbacks['job_state_template'] = cb;
+          if (params.template === "{{ '00:45:00' }}") callbacks['time_template'] = cb;
+          return async () => {};
+        }),
+      },
+    };
+
+    element.hass = hass as any;
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'washer',
+      job_state_template: "{{ 'wash' }}",
+      time_template: "{{ '00:45:00' }}",
+    });
+
+    await element.updateComplete;
+
+    // Simulate WebSocket template result push
+    if (callbacks['job_state_template']) {
+      callbacks['job_state_template']({ result: 'wash' });
+    }
+    if (callbacks['time_template']) {
+      callbacks['time_template']({ result: '00:45:00' });
+    }
+
+    await element.updateComplete;
+
+    const activeIconContainer = element.shadowRoot?.querySelector('.job-icon-container.active');
+    expect(activeIconContainer).toBeTruthy();
+
+    const img = activeIconContainer?.querySelector('img.job-icon');
+    expect(img?.getAttribute('alt')).toBe('Wash');
+
+    const timeFg = element.shadowRoot?.querySelector('.time-fg');
+    expect(timeFg?.textContent).toBe('00:45:00');
+  });
+
   it('should render secondary alarm icon when alarm_code_entity is active', async () => {
     const hass = {
       ...mockHass,

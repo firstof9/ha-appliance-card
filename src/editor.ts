@@ -234,6 +234,14 @@ export class ApplianceCardEditor extends LitElement {
     const footerSchema = [
       { name: 'appliance_image', label: 'Appliance Image Path (Optional)', selector: { text: {} } },
       { name: 'background_color', label: 'Background Color (Optional)', selector: { color_rgb: {} } },
+      { name: 'stage_map', label: 'Custom Stage Mappings (Optional Object: { "sensor_state": "card_stage" })', selector: { object: {} } },
+      { name: 'mode_map', label: 'Custom Mode Mappings (Optional Object: { "sensor_state": "card_mode" })', selector: { object: {} } },
+      { name: 'time_template', label: 'Time Jinja Template (Optional)', selector: { template: {} } },
+      { name: 'job_state_template', label: 'Job State Jinja Template (Optional)', selector: { template: {} } },
+      { name: 'mode_template', label: 'Mode Jinja Template (Optional)', selector: { template: {} } },
+      { name: 'temperature_template', label: 'Temperature Jinja Template (Optional)', selector: { template: {} } },
+      { name: 'power_template', label: 'Power Jinja Template (Optional)', selector: { template: {} } },
+      { name: 'alarm_code_template', label: 'Alarm Code Jinja Template (Optional)', selector: { template: {} } },
     ];
 
     let finalSchema: any[] = [...baseSchema];
