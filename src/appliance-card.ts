@@ -702,9 +702,12 @@ export class ApplianceCard extends LitElement {
       <div class="secondary-icons">
         ${sabbathState && sabbathState.state === 'on'
           ? html`
-              <span data-tooltip="Sabbath Mode Active">
-                <ha-icon class="secondary-icon sabbath" icon="mdi:candle"></ha-icon>
-              </span>
+              <ha-icon
+                class="secondary-icon sabbath active"
+                icon="mdi:star-david"
+                title="Sabbath Mode On"
+                style="color: #9c27b0;"
+              ></ha-icon>
             `
           : ''}
         ${isAlarmActive
