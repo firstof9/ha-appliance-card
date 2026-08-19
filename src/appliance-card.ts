@@ -216,6 +216,17 @@ export class ApplianceCard extends LitElement {
     return true;
   }
 
+  private _findInMap(map: Record<string, string>, key: string): string | undefined {
+    if (!map || !key) return undefined;
+    const lowerKey = key.toLowerCase();
+    for (const [mapKey, mapVal] of Object.entries(map)) {
+      if (mapKey.toLowerCase() === lowerKey) {
+        return mapVal;
+      }
+    }
+    return undefined;
+  }
+
   private _formatCountdown(timeStr: string, unit?: string): string {
     return formatCountdown(timeStr, this._currentTime, unit);
   }
@@ -238,13 +249,23 @@ export class ApplianceCard extends LitElement {
     const isPoweredOff = powerValue?.toLowerCase() === 'off';
 
     // Active mode logic (prioritize templates if defined, then job state, then mode)
-    const rawJobState = (this._templateResults['job_state_template'] !== undefined
+    let rawJobState = (this._templateResults['job_state_template'] !== undefined
       ? this._templateResults['job_state_template']
       : jobStateObj?.state?.toLowerCase()) || 'off';
 
-    const rawModeState = (this._templateResults['mode_template'] !== undefined
+    let rawModeState = (this._templateResults['mode_template'] !== undefined
       ? this._templateResults['mode_template']
       : modeStateObj?.state?.toLowerCase()) || 'off';
+
+    // Apply custom stage_map and mode_map if configured
+    if (this.config.stage_map) {
+      const mapped = this._findInMap(this.config.stage_map, rawJobState);
+      if (mapped) rawJobState = mapped.toLowerCase();
+    }
+    if (this.config.mode_map) {
+      const mapped = this._findInMap(this.config.mode_map, rawModeState);
+      if (mapped) rawModeState = mapped.toLowerCase();
+    }
 
     const isJobGeneric = ['none', 'others', 'off', 'unknown', 'unavailable', 'idle', 'running', 'cooking'].includes(rawJobState);
     
