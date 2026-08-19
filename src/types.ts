@@ -15,6 +15,12 @@ export interface HomeAssistant {
   states: Record<string, HassEntityState>;
   locale?: { language?: string };
   language?: string;
+  connection?: {
+    subscribeMessage<T>(
+      callback: (result: T) => void,
+      params: { type: string; [key: string]: any }
+    ): Promise<() => Promise<void>>;
+  };
   callService(domain: string, service: string, data?: Record<string, any>): Promise<void>;
 }
 
@@ -23,10 +29,15 @@ export interface ApplianceCardConfig {
   appliance_type: 'microwave' | 'oven' | 'dishwasher' | 'washer' | 'dryer' | 'refrigerator' | 'cooktop' | 'kettle';
   device_id?: string;
   power_entity?: string;
+  power_template?: string;
   mode_entity?: string;
+  mode_template?: string;
   job_state_entity?: string;
+  job_state_template?: string;
   machine_state_entity?: string;
+  machine_state_template?: string;
   time_entity?: string;
+  time_template?: string;
   door_entities?: string[];
   fridge_temp_entity?: string;
   freezer_temp_entity?: string;
@@ -36,9 +47,11 @@ export interface ApplianceCardConfig {
   wifi_entity?: string;
   lock_entity?: string;
   alarm_code_entity?: string;
+  alarm_code_template?: string;
   fan_entity?: string;
   light_entity?: string;
   temperature_entity?: string;
+  temperature_template?: string;
   burner_left_front_on_entity?: string;
   burner_left_rear_on_entity?: string;
   burner_center_rear_on_entity?: string;

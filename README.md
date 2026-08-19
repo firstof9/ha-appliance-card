@@ -91,6 +91,70 @@ For manual YAML configuration:
 | `light_entity` | string | **Optional** | The entity ID for the microwave light toggle. |
 | `temperature_entity` | string | **Optional** | The entity ID for the cooking temperature sensor. |
 
+### Cooktop Specific Options
+| Name | Type | Requirement | Description |
+| --- | --- | --- | --- |
+| `burner_<position>_on_entity` | string | **Optional** | Binary sensor for burner flame/power state. |
+| `burner_<position>_power_entity` | string | **Optional** | Sensor for burner power percentage (0-100%). |
+| `burner_<position>_sync_entity` | string | **Optional** | Binary sensor for burner synchronization. |
+| `sabbath_mode_entity` | string | **Optional** | Switch or binary sensor for Sabbath mode. |
+
+### Template & Virtual Appliance Options
+| Name | Type | Requirement | Description |
+| --- | --- | --- | --- |
+| `stage_map` | object | **Optional** | Key-value mapping from custom sensor state strings to card stages (e.g. `soaking: wash`). |
+| `mode_map` | object | **Optional** | Key-value mapping from custom sensor state strings to card modes. |
+| `time_template` | string | **Optional** | Jinja2 template rendering live time remaining or duration (e.g. `{{ states('sensor.washer_secs') }}`). |
+| `job_state_template` | string | **Optional** | Jinja2 template rendering active job/cycle state. |
+| `mode_template` | string | **Optional** | Jinja2 template rendering active appliance mode. |
+| `power_template` | string | **Optional** | Jinja2 template returning `on` or `off` for power state. |
+| `temperature_template` | string | **Optional** | Jinja2 template returning temperature value. |
+| `alarm_code_template` | string | **Optional** | Jinja2 template returning alarm/fault code. |
+
+---
+
+## Template & Virtual Appliance Examples
+
+`ha-appliance-card` supports non-smart appliances and custom integrations (ESPHome, Shelly, Tuya, Bosch, Miele, MQTT, Virtual Helper Sensors) using flexible duration parsers, stage mapping, and live Jinja2 template evaluation.
+
+### Example 1: Template Washer with Stage Mapping & Seconds Timer
+```yaml
+type: custom:appliance-card
+appliance_type: washer
+job_state_entity: sensor.template_washer_status
+time_entity: sensor.template_washer_seconds_remaining
+stage_map:
+  soaking: weight_sensing
+  filling: wash
+  washing: wash
+  deep_rinse: rinse
+  extracting: spin
+```
+
+### Example 2: Jinja2 Live Template Expressions
+```yaml
+type: custom:appliance-card
+appliance_type: dryer
+power_template: "{{ 'on' if is_state('sensor.dryer_power', 'running') else 'off' }}"
+job_state_template: >
+  {% if is_state('sensor.dryer_phase', 'drying') %}
+    dry
+  {% elif is_state('sensor.dryer_phase', 'cooling') %}
+    cool
+  {% else %}
+    off
+  {% endif %}
+time_template: "{{ states('sensor.dryer_remaining_minutes') | int * 60 }}"
+```
+
+### Example 3: Flexible Time Formats
+The `time_entity` and `time_template` automatically parse:
+- **Raw Seconds**: `3600` &rarr; `01:00:00`
+- **Units of Measurement**: `45` with unit `min` &rarr; `00:45:00`
+- **Human Formatted Strings**: `"1h 25m"`, `"45 mins"`, `"90 sec"`
+- **Standard Durations**: `"01:15:00"`, `"25:00"` (MM:SS &rarr; 00:25:00)
+- **ISO Target Timestamps**: `"2026-08-18T16:30:00Z"` &rarr; Live countdown
+
 ## Themes
 
 This card supports Home Assistant themes and uses standard CSS variables for styling. You can customize the look of the card by modifying these variables in your theme:

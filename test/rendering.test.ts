@@ -245,6 +245,50 @@ describe('ApplianceCard rendering', () => {
     expect(img?.getAttribute('alt')).toBe('Wash');
   });
 
+  it('should render evaluated template values from WebSocket subscription', async () => {
+    const callbacks: Record<string, Function> = {};
+
+    const hass = {
+      ...mockHass,
+      connection: {
+        subscribeMessage: vi.fn(async (cb: Function, params: any) => {
+          if (params.template === "{{ 'wash' }}") callbacks['job_state_template'] = cb;
+          if (params.template === "{{ '00:45:00' }}") callbacks['time_template'] = cb;
+          return async () => {};
+        }),
+      },
+    };
+
+    element.hass = hass as any;
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'washer',
+      job_state_template: "{{ 'wash' }}",
+      time_template: "{{ '00:45:00' }}",
+    });
+
+    await element.updateComplete;
+
+    // Simulate WebSocket template result push
+    if (callbacks['job_state_template']) {
+      callbacks['job_state_template']({ result: 'wash' });
+    }
+    if (callbacks['time_template']) {
+      callbacks['time_template']({ result: '00:45:00' });
+    }
+
+    await element.updateComplete;
+
+    const activeIconContainer = element.shadowRoot?.querySelector('.job-icon-container.active');
+    expect(activeIconContainer).toBeTruthy();
+
+    const img = activeIconContainer?.querySelector('img.job-icon');
+    expect(img?.getAttribute('alt')).toBe('Wash');
+
+    const timeFg = element.shadowRoot?.querySelector('.time-fg');
+    expect(timeFg?.textContent).toBe('00:45:00');
+  });
+
   it('should render secondary alarm icon when alarm_code_entity is active', async () => {
     const hass = {
       ...mockHass,
@@ -266,9 +310,13 @@ describe('ApplianceCard rendering', () => {
 
     await element.updateComplete;
 
+    const alarmWrapper = element.shadowRoot?.querySelector('.secondary-icon-wrapper');
+    expect(alarmWrapper).toBeTruthy();
+    expect(alarmWrapper?.getAttribute('data-tooltip')).toBe('Door Open / Latch Error: DC');
+    expect(alarmWrapper?.getAttribute('role')).toBe('img');
+    expect(alarmWrapper?.getAttribute('aria-label')).toBe('Door Open / Latch Error: DC');
     const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
     expect(alarmIcon).toBeTruthy();
-    expect(alarmIcon?.getAttribute('title')).toBe('Door Open / Latch Error: DC');
   });
 
   it('should render secondary rinse aid alarm icon for dishwasher', async () => {
@@ -292,9 +340,11 @@ describe('ApplianceCard rendering', () => {
 
     await element.updateComplete;
 
+    const alarmWrapper = element.shadowRoot?.querySelector('.secondary-icon-wrapper');
+    expect(alarmWrapper).toBeTruthy();
+    expect(alarmWrapper?.getAttribute('data-tooltip')).toBe('Rinse Aid Empty / Low: RINSE_AID_EMPTY');
     const alarmIcon = element.shadowRoot?.querySelector('.secondary-icon.alarm');
     expect(alarmIcon).toBeTruthy();
-    expect(alarmIcon?.getAttribute('title')).toBe('Rinse Aid Empty / Low: RINSE_AID_EMPTY');
   });
 
   it('should render the card with cooktop configuration and burner status elements', async () => {

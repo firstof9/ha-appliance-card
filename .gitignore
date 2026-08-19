@@ -3,5 +3,7 @@ dist/
 *.log
 .DS_Store
 .node/
+appliance-card.js
+appliance-card.js.map
 smartthings-card.js
 smartthings-card.js.map
