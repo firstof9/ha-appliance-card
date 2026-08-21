@@ -63,7 +63,7 @@ For manual YAML configuration:
 | Name | Type | Requirement | Description |
 | --- | --- | --- | --- |
 | `type` | string | **Required** | `custom:appliance-card` (deprecated: `custom:smartthings-card`) |
-| `device_id` | string | **Required** | The Home Assistant device ID. |
+| `device_id` | string | **Optional** | The Home Assistant device ID. Used in the visual editor for automatic entity discovery. |
 | `appliance_type` | string | **Optional** | `microwave`, `oven`, `dishwasher`, `washer`, `dryer`, `refrigerator`, `cooktop`, `kettle`. Defaults to `microwave`. |
 | `power_entity` | string | **Optional** | The entity ID for power state (switch or binary_sensor). |
 | `mode_entity` | string | **Optional** | The entity ID for the current appliance mode. |
