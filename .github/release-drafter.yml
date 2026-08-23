@@ -5,6 +5,35 @@ change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 sort-direction: ascending
 
 categories:
+  # Version Resolver Categories (New Schema - PR #1558)
+  - type: "version-resolver"
+    semver-increment: "major"
+    when:
+      labels:
+        - "breaking-change"
+  - type: "version-resolver"
+    semver-increment: "minor"
+    when:
+      labels:
+        - "feature"
+        - "enhancement"
+  - type: "version-resolver"
+    semver-increment: "patch"
+    when:
+      labels:
+        - "bug"
+        - "fix"
+        - "bugfix"
+        - "style"
+        - "dependencies"
+        - "chore"
+        - "ci"
+        - "code-quality"
+        - "documentation"
+  - type: "version-resolver"
+    semver-increment: "patch" # Default fallback
+
+  # Changelog Grouping Categories
   - title: '✨ Enhancements'
     labels:
       - 'enhancement'
