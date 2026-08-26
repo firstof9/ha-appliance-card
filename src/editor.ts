@@ -144,7 +144,7 @@ export class ApplianceCardEditor extends LitElement {
       {
         name: 'light_entity',
         label: 'Light Control Entity (Optional)',
-        selector: getEntitySelector(['light', 'switch']),
+        selector: getEntitySelector(['light', 'switch', 'select']),
       },
       {
         name: 'temperature_entity',

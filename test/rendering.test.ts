@@ -410,4 +410,207 @@ describe('ApplianceCard rendering', () => {
     const tempDisplay = element.shadowRoot?.querySelector('.temp-fg span');
     expect(tempDisplay?.textContent?.trim()).toBe('180');
   });
+
+  it('should toggle switch microwave light entity off when currently on', async () => {
+    const callServiceMock = vi.fn();
+    const hass = {
+      ...mockHass,
+      callService: callServiceMock,
+      states: {
+        ...mockHass.states,
+        'switch.microwave_lamp': {
+          entity_id: 'switch.microwave_lamp',
+          state: 'on',
+          attributes: { friendly_name: 'Lamp' },
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      light_entity: 'switch.microwave_lamp',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const lightControl = element.shadowRoot?.querySelector('.light-control') as HTMLElement;
+    expect(lightControl).toBeTruthy();
+    expect(lightControl.classList.contains('on')).toBe(true);
+
+    lightControl.click();
+    expect(callServiceMock).toHaveBeenCalledWith('switch', 'turn_off', {
+      entity_id: 'switch.microwave_lamp',
+    });
+  });
+
+  it('should toggle switch microwave light entity on when currently off', async () => {
+    const callServiceMock = vi.fn();
+    const hass = {
+      ...mockHass,
+      callService: callServiceMock,
+      states: {
+        ...mockHass.states,
+        'switch.microwave_lamp': {
+          entity_id: 'switch.microwave_lamp',
+          state: 'off',
+          attributes: { friendly_name: 'Lamp' },
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      light_entity: 'switch.microwave_lamp',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const lightControl = element.shadowRoot?.querySelector('.light-control') as HTMLElement;
+    expect(lightControl).toBeTruthy();
+    expect(lightControl.classList.contains('on')).toBe(false);
+
+    lightControl.click();
+    expect(callServiceMock).toHaveBeenCalledWith('switch', 'turn_on', {
+      entity_id: 'switch.microwave_lamp',
+    });
+  });
+
+  it('should toggle select microwave light entity off when currently on/high', async () => {
+    const callServiceMock = vi.fn();
+    const hass = {
+      ...mockHass,
+      callService: callServiceMock,
+      states: {
+        ...mockHass.states,
+        'select.microwave_light': {
+          entity_id: 'select.microwave_light',
+          state: 'high',
+          attributes: {
+            friendly_name: 'Microwave Light',
+            options: ['off', 'low', 'high'],
+          },
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      light_entity: 'select.microwave_light',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const lightControl = element.shadowRoot?.querySelector('.light-control') as HTMLElement;
+    expect(lightControl).toBeTruthy();
+    expect(lightControl.classList.contains('on')).toBe(true);
+
+    lightControl.click();
+    expect(callServiceMock).toHaveBeenCalledWith('select', 'select_option', {
+      entity_id: 'select.microwave_light',
+      option: 'off',
+    });
+  });
+
+  it('should toggle select microwave light entity on when currently off', async () => {
+    const callServiceMock = vi.fn();
+    const hass = {
+      ...mockHass,
+      callService: callServiceMock,
+      states: {
+        ...mockHass.states,
+        'select.microwave_light': {
+          entity_id: 'select.microwave_light',
+          state: 'off',
+          attributes: {
+            friendly_name: 'Microwave Light',
+            options: ['off', 'low', 'high'],
+          },
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      light_entity: 'select.microwave_light',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const lightControl = element.shadowRoot?.querySelector('.light-control') as HTMLElement;
+    expect(lightControl).toBeTruthy();
+    expect(lightControl.classList.contains('on')).toBe(false);
+
+    lightControl.click();
+    expect(callServiceMock).toHaveBeenCalledWith('select', 'select_option', {
+      entity_id: 'select.microwave_light',
+      option: 'high',
+    });
+  });
+
+  it('should omit job-label text for microwave autocook mode', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.microwave_job_state': {
+          state: 'cooking',
+          attributes: {},
+        },
+        'sensor.microwave_mode': {
+          state: 'autocook',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      mode_entity: 'sensor.microwave_mode',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const jobLabel = element.shadowRoot?.querySelector('.job-label');
+    expect(jobLabel).toBeNull();
+  });
+
+  it('should render job-label text for other active microwave modes like bake', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.microwave_job_state': {
+          state: 'cooking',
+          attributes: {},
+        },
+        'sensor.microwave_mode': {
+          state: 'bake',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      mode_entity: 'sensor.microwave_mode',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const jobLabel = element.shadowRoot?.querySelector('.job-label');
+    expect(jobLabel).not.toBeNull();
+    expect(jobLabel?.textContent?.trim()).toBe('Bake');
+  });
 });

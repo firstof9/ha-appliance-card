@@ -248,10 +248,10 @@ export class ApplianceCard extends LitElement {
       : powerStateObj?.state;
     const isPoweredOff = powerValue?.toLowerCase() === 'off';
 
-    // Active mode logic (prioritize templates if defined, then job state, then mode)
+    // Active mode logic (prioritize templates if defined, then job state, then machine state, then mode)
     let rawJobState = (this._templateResults['job_state_template'] !== undefined
       ? this._templateResults['job_state_template']
-      : jobStateObj?.state?.toLowerCase()) || 'off';
+      : (jobStateObj?.state || machineStateObj?.state)?.toLowerCase()) || 'off';
 
     let rawModeState = (this._templateResults['mode_template'] !== undefined
       ? this._templateResults['mode_template']
@@ -341,19 +341,32 @@ export class ApplianceCard extends LitElement {
     `;
   }
 
+  private _isLightOn(lightStateObj: any): boolean {
+    if (!lightStateObj || !lightStateObj.state) return false;
+    const domain = this.config.light_entity?.split('.')[0];
+    const state = String(lightStateObj.state).toLowerCase();
+    if (state === 'unavailable' || state === 'unknown') return false;
+    if (domain === 'select' || domain === 'number') {
+      return state !== 'off' && state !== '0';
+    }
+    return state === 'on';
+  }
+
   private _renderMicrowaveControls(): TemplateResult | void {
     const fanStateObj = this.config.fan_entity ? this.hass.states[this.config.fan_entity] : null;
     const lightStateObj = this.config.light_entity ? this.hass.states[this.config.light_entity] : null;
 
     if (!fanStateObj && !lightStateObj) return;
 
+    const isLightOn = this._isLightOn(lightStateObj);
+
     return html`
       <div class="microwave-controls">
         <div class="control-group">
           ${lightStateObj
             ? html`
-                <div class="light-control ${lightStateObj.state === 'on' ? 'on' : ''}" @click=${this._toggleLight}>
-                  <ha-icon icon="${lightStateObj.state === 'on' ? 'mdi:lightbulb' : 'mdi:lightbulb-outline'}"></ha-icon>
+                <div class="light-control ${isLightOn ? 'on' : ''}" @click=${this._toggleLight}>
+                  <ha-icon icon="${isLightOn ? 'mdi:lightbulb' : 'mdi:lightbulb-outline'}"></ha-icon>
                 </div>
               `
             : ''}
@@ -424,10 +437,48 @@ export class ApplianceCard extends LitElement {
 
   private _toggleLight(): void {
     if (!this.hass || !this.config.light_entity) return;
-    const state = this.hass.states[this.config.light_entity].state;
-    this.hass.callService('light', state === 'on' ? 'turn_off' : 'turn_on', {
-      entity_id: this.config.light_entity,
-    });
+    const stateObj = this.hass.states[this.config.light_entity];
+    if (!stateObj) return;
+
+    const domain = this.config.light_entity.split('.')[0];
+    const isOn = this._isLightOn(stateObj);
+
+    if (domain === 'select') {
+      const options: string[] = (stateObj.attributes?.options as string[]) || [];
+      if (isOn) {
+        const offOption =
+          options.find((opt) => {
+            const lower = opt.toLowerCase();
+            return lower === 'off' || lower === '0';
+          }) ||
+          options[0] ||
+          'off';
+        this.hass.callService('select', 'select_option', {
+          entity_id: this.config.light_entity,
+          option: offOption,
+        });
+      } else {
+        const onOption =
+          options.find((opt) => opt.toLowerCase() === 'on') ||
+          options.find((opt) => opt.toLowerCase() === 'high') ||
+          options.find((opt) => opt.toLowerCase() === 'low') ||
+          options.find((opt) => {
+            const lower = opt.toLowerCase();
+            return lower !== 'off' && lower !== '0';
+          }) ||
+          options[options.length - 1] ||
+          'on';
+        this.hass.callService('select', 'select_option', {
+          entity_id: this.config.light_entity,
+          option: onOption,
+        });
+      }
+    } else {
+      const service = isOn ? 'turn_off' : 'turn_on';
+      this.hass.callService(domain, service, {
+        entity_id: this.config.light_entity,
+      });
+    }
   }
 
   private _handleFanSpeed(ev: Event, fanStateObj: any): void {
@@ -614,6 +665,8 @@ export class ApplianceCard extends LitElement {
       `;
     }
 
+    const labelText = isActive ? (activeStage.name === 'autocook' || activeStage.icon === 'autocook' ? '' : this._getStageLabel(activeStage.name)) : 'Idle';
+
     // Centered single icon for microwave/oven
     return html`
       <div class="job-states">
@@ -622,7 +675,7 @@ export class ApplianceCard extends LitElement {
           <img class="job-icon" 
             src="${this._getAsset(appliance, iconName)}" 
             alt="${isActive ? this._getStageLabel(activeStage.name) : 'Idle'}" />
-          <div class="job-label">${isActive ? this._getStageLabel(activeStage.name) : 'Idle'}</div>
+          ${labelText ? html`<div class="job-label">${labelText}</div>` : ''}
         </div>
       </div>
     `;
