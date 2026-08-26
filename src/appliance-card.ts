@@ -665,6 +665,8 @@ export class ApplianceCard extends LitElement {
       `;
     }
 
+    const labelText = isActive ? (activeStage.name === 'autocook' || activeStage.icon === 'autocook' ? '' : this._getStageLabel(activeStage.name)) : 'Idle';
+
     // Centered single icon for microwave/oven
     return html`
       <div class="job-states">
@@ -673,7 +675,7 @@ export class ApplianceCard extends LitElement {
           <img class="job-icon" 
             src="${this._getAsset(appliance, iconName)}" 
             alt="${isActive ? this._getStageLabel(activeStage.name) : 'Idle'}" />
-          <div class="job-label">${isActive ? this._getStageLabel(activeStage.name) : 'Idle'}</div>
+          ${labelText ? html`<div class="job-label">${labelText}</div>` : ''}
         </div>
       </div>
     `;

@@ -554,4 +554,63 @@ describe('ApplianceCard rendering', () => {
       option: 'high',
     });
   });
+
+  it('should omit job-label text for microwave autocook mode', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.microwave_job_state': {
+          state: 'cooking',
+          attributes: {},
+        },
+        'sensor.microwave_mode': {
+          state: 'autocook',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      mode_entity: 'sensor.microwave_mode',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const jobLabel = element.shadowRoot?.querySelector('.job-label');
+    expect(jobLabel).toBeNull();
+  });
+
+  it('should render job-label text for other active microwave modes like bake', async () => {
+    const hass = {
+      ...mockHass,
+      states: {
+        ...mockHass.states,
+        'sensor.microwave_job_state': {
+          state: 'cooking',
+          attributes: {},
+        },
+        'sensor.microwave_mode': {
+          state: 'bake',
+          attributes: {},
+        },
+      },
+    };
+
+    element.setConfig({
+      type: 'custom:appliance-card',
+      appliance_type: 'microwave',
+      job_state_entity: 'sensor.microwave_job_state',
+      mode_entity: 'sensor.microwave_mode',
+    });
+    element.hass = hass as any;
+    await element.updateComplete;
+
+    const jobLabel = element.shadowRoot?.querySelector('.job-label');
+    expect(jobLabel).not.toBeNull();
+    expect(jobLabel?.textContent?.trim()).toBe('Bake');
+  });
 });
