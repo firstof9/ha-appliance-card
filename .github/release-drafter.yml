@@ -99,30 +99,6 @@ autolabeler:
       - '/^build\(deps\)(\(.+\))?:/i'
       - '/^deps(\(.+\))?:/i'
 
-version-resolver:
-  major:
-    labels:
-      - 'breaking-change'
-      - 'breaking change'
-  minor:
-    labels:
-      - 'feature'
-      - 'enhancement'
-  patch:
-    labels:
-      - 'bug'
-      - 'fix'
-      - 'performance'
-      - 'refactor'
-      - 'style'
-      - 'build'
-      - 'chore'
-      - 'documentation'
-      - 'ci'
-      - 'test'
-      - 'dependencies'
-  default: patch
-
 template: |
   [![Downloads for this release](https://img.shields.io/github/downloads/firstof9/ha-appliance-card/$RESOLVED_VERSION/total.svg)](https://github.com/firstof9/ha-appliance-card/releases/$RESOLVED_VERSION)
 
