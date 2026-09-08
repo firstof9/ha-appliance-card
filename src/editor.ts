@@ -321,8 +321,10 @@ export class ApplianceCardEditor extends LitElement {
     // If no device-specific entities found (e.g. registry not loaded), fall back to all
     const relevantEntities = deviceEntities.length > 0 ? deviceEntities : entities;
 
-    // 1. Detect Appliance Type if not set or if device changed
-    if (deviceId) {
+    // 1. Detect Appliance Type if not already chosen (e.g. by the user, or by a
+    // caller that already knows which logical appliance this card is for --
+    // see the combo-device note below).
+    if (deviceId && !newConfig.appliance_type) {
       const allText = relevantEntities.map(id => id + ' ' + (this.hass!.states[id].attributes.friendly_name || '')).join(' ').toLowerCase();
 
       if (allText.includes('refrigerator') || allText.includes('fridge') || allText.includes('freezer')) {
@@ -347,9 +349,38 @@ export class ApplianceCardEditor extends LitElement {
     const type = newConfig.appliance_type;
     if (!type) return newConfig;
 
-    // 2. Helper to find a specific entity (stripping trailing numeric suffixes like _2, _3)
+    // 2. Some devices (e.g. LG WashTower-style combo units bridged through
+    // rethink/MQTT) expose two logical appliances -- washer_* and dryer_* --
+    // as entities on a single HA device. Scope the search pool to entities
+    // that either belong to this card's own appliance type or don't obviously
+    // belong to a different one, so a "washer" card doesn't pick up the
+    // dryer's state/time entities (and vice versa). Devices that don't carry
+    // any of these keywords in their entity IDs (e.g. a Samsung "range" that
+    // is configured as an oven) are unaffected.
+    const APPLIANCE_TYPE_KEYWORDS: Record<string, string[]> = {
+      refrigerator: ['refrigerator', 'fridge', 'freezer'],
+      cooktop: ['cooktop'],
+      dishwasher: ['dishwasher'],
+      washer: ['washer'],
+      dryer: ['dryer'],
+      microwave: ['microwave'],
+      kettle: ['kettle'],
+      oven: ['oven'],
+    };
+    const ownKeywords = APPLIANCE_TYPE_KEYWORDS[type] || [];
+    const otherKeywords = Object.entries(APPLIANCE_TYPE_KEYWORDS)
+      .filter(([t]) => t !== type)
+      .flatMap(([, words]) => words);
+    const scopedEntities = relevantEntities.filter((id) => {
+      const lower = id.toLowerCase();
+      if (ownKeywords.some((w) => lower.includes(w))) return true;
+      return !otherKeywords.some((w) => lower.includes(w));
+    });
+    const searchPool = scopedEntities.length > 0 ? scopedEntities : relevantEntities;
+
+    // 3. Helper to find a specific entity (stripping trailing numeric suffixes like _2, _3)
     const findEntity = (suffixes: string[], domain?: string) => {
-      return relevantEntities.find((id) => {
+      return searchPool.find((id) => {
         const normalizedId = id.toLowerCase().replace(/_\d+$/, '');
         const matchesSuffix = suffixes.some((s) => normalizedId.endsWith(s) || normalizedId.includes(s));
         const matchesDomain = !domain || id.startsWith(domain + '.');
@@ -357,14 +388,14 @@ export class ApplianceCardEditor extends LitElement {
       });
     };
 
-    // 3. Autofill logic supporting SmartThings, LocalThings, SmartThinQ Sensors, LG ThinQ, GE/Café, Home Connect, and Govee
+    // 4. Autofill logic supporting SmartThings, LocalThings, SmartThinQ Sensors, LG ThinQ, GE/Café, Home Connect, Govee, and generic MQTT devices (e.g. rethink)
     newConfig.power_entity = newConfig.power_entity || findEntity(['_cooktop_status'], 'binary_sensor') || findEntity(['_switch', '_power', '_power_switch', '_oven'], 'water_heater') || findEntity(['_switch', '_power', '_power_switch'], 'switch') || findEntity(['_power', '_state'], 'binary_sensor');
     newConfig.machine_state_entity = newConfig.machine_state_entity || findEntity(['_machine_state', '_operation_state', '_appliance_state', '_current_status', '_run_state', '_operation', '_state', '_current_state']) || findEntity(['_status'], 'sensor') || findEntity(['_status'], 'select');
-    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode', '_program_progress', '_selected_program', '_active_program', '_cavity_state', '_course_selection']) || findEntity(['_mode'], 'select') || findEntity(['_mode'], 'sensor');
+    newConfig.job_state_entity = newConfig.job_state_entity || findEntity(['_job_state', '_running_state', '_cycle_state', '_pre_state', '_current_course', '_progress', '_cooking_mode', '_cook_mode', '_program_progress', '_selected_program', '_active_program', '_cavity_state', '_course_selection']) || findEntity(['_mode'], 'select') || findEntity(['_mode'], 'sensor') || findEntity(['_course'], 'sensor') || findEntity(['_course'], 'select');
     newConfig.time_entity = newConfig.time_entity || findEntity(['_time_remaining', '_remaining_time', '_time_left', '_estimated_finish', '_total_time', '_cook_time_remaining', '_kitchen_timer', '_program_finish_time', '_countdown_time'], 'sensor');
     newConfig.wifi_entity = newConfig.wifi_entity || findEntity(['_wifi', '_connectivity', '_ssid'], 'binary_sensor') || findEntity(['_ssid'], 'sensor');
     newConfig.lock_entity = newConfig.lock_entity || findEntity(['_lock', '_child_lock', '_door_lock', '_remote_start', '_remote_enabled', '_remote_control']);
-    newConfig.alarm_code_entity = newConfig.alarm_code_entity || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm', '_error_message'], 'sensor') || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm', '_error_message'], 'select');
+    newConfig.alarm_code_entity = newConfig.alarm_code_entity || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm', '_error_message', '_error'], 'sensor') || findEntity(['_alarm_code', '_error_code', '_fault_code', '_alarm', '_error_message', '_error'], 'select');
     newConfig.fan_entity = newConfig.fan_entity || findEntity(['_fan', '_fan_speed', ''], 'fan') || findEntity(['_fan_speed'], 'number');
     newConfig.light_entity = newConfig.light_entity || findEntity(['_light', '_lamp', ''], 'light') || findEntity(['_light', '_lamp'], 'switch') || findEntity(['_light'], 'select');
     newConfig.temperature_entity = newConfig.temperature_entity || findEntity(['_target_temperature'], 'number') || findEntity(['_temperature', '_target_temperature', '_display_temperature', '_raw_temperature'], 'sensor');
@@ -396,7 +427,7 @@ export class ApplianceCardEditor extends LitElement {
       newConfig.filter_status_entity = newConfig.filter_status_entity || findEntity(['_filter_status', '_water_filter_status', '_water_filter', '_filter_usage'], 'sensor');
       newConfig.filter_reset_entity = newConfig.filter_reset_entity || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'button') || findEntity(['_filter_reset', '_reset_water_filter', '_water_filter_reset'], 'switch');
 
-      const doors = relevantEntities.filter(id => (id.includes('_door') || id.includes('_door_open')) && id.startsWith('binary_sensor.'));
+      const doors = searchPool.filter(id => (id.includes('_door') || id.includes('_door_open')) && id.startsWith('binary_sensor.'));
       if (doors.length > 0 && (!newConfig.door_entities || newConfig.door_entities.length === 0)) {
         newConfig.door_entities = doors;
       }
