@@ -495,4 +495,116 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.time_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish');
     expect(autofilled.temperature_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_temperature');
   });
+
+  it('should autofill rethink washer entities via generic MQTT discovery, including _course and _error suffixes', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    const rethinkHass = {
+      ...mockHass,
+      entities: {
+        'switch.rethink_washer_power': { device_id: 'dev_rethink_washer' },
+        'sensor.rethink_washer_state': { device_id: 'dev_rethink_washer' },
+        'sensor.rethink_washer_course': { device_id: 'dev_rethink_washer' },
+        'sensor.rethink_washer_remaining_time': { device_id: 'dev_rethink_washer' },
+        'sensor.rethink_washer_error': { device_id: 'dev_rethink_washer' },
+        'binary_sensor.rethink_washer_child_lock': { device_id: 'dev_rethink_washer' },
+      },
+      states: {
+        'switch.rethink_washer_power': { state: 'ON', attributes: { friendly_name: 'Washer power' } },
+        'sensor.rethink_washer_state': { state: 'RUNNING', attributes: { friendly_name: 'Washer state' } },
+        'sensor.rethink_washer_course': { state: 'NORMAL', attributes: { friendly_name: 'Washer course' } },
+        'sensor.rethink_washer_remaining_time': { state: '35', attributes: { friendly_name: 'Washer remaining time', unit_of_measurement: 'min' } },
+        'sensor.rethink_washer_error': { state: 'NONE', attributes: { friendly_name: 'Washer error' } },
+        'binary_sensor.rethink_washer_child_lock': { state: 'OFF', attributes: { friendly_name: 'Washer child lock' } },
+      },
+    };
+    editor.hass = rethinkHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_rethink_washer',
+      appliance_type: 'washer',
+    });
+
+    expect(autofilled.power_entity).toBe('switch.rethink_washer_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.rethink_washer_state');
+    expect(autofilled.job_state_entity).toBe('sensor.rethink_washer_course');
+    expect(autofilled.time_entity).toBe('sensor.rethink_washer_remaining_time');
+    expect(autofilled.alarm_code_entity).toBe('sensor.rethink_washer_error');
+    expect(autofilled.lock_entity).toBe('binary_sensor.rethink_washer_child_lock');
+  });
+
+  it('should not cross-contaminate a rethink WashTower-style combo device between washer and dryer cards', () => {
+    const comboEntities = {
+      'switch.lg_washtower_washer_power': { device_id: 'dev_washtower' },
+      'sensor.lg_washtower_washer_state': { device_id: 'dev_washtower' },
+      'sensor.lg_washtower_washer_course': { device_id: 'dev_washtower' },
+      'sensor.lg_washtower_washer_remaining_time': { device_id: 'dev_washtower' },
+      'switch.lg_washtower_dryer_power': { device_id: 'dev_washtower' },
+      'sensor.lg_washtower_dryer_state': { device_id: 'dev_washtower' },
+      'sensor.lg_washtower_dryer_course': { device_id: 'dev_washtower' },
+      'sensor.lg_washtower_dryer_remaining_time': { device_id: 'dev_washtower' },
+    };
+    const comboStates = {
+      'switch.lg_washtower_washer_power': { state: 'ON', attributes: { friendly_name: 'Washer power' } },
+      'sensor.lg_washtower_washer_state': { state: 'RUNNING', attributes: { friendly_name: 'Washer state' } },
+      'sensor.lg_washtower_washer_course': { state: 'NORMAL', attributes: { friendly_name: 'Washer course' } },
+      'sensor.lg_washtower_washer_remaining_time': { state: '35', attributes: { friendly_name: 'Washer remaining time', unit_of_measurement: 'min' } },
+      'switch.lg_washtower_dryer_power': { state: 'OFF', attributes: { friendly_name: 'Dryer power' } },
+      'sensor.lg_washtower_dryer_state': { state: 'POWEROFF', attributes: { friendly_name: 'Dryer state' } },
+      'sensor.lg_washtower_dryer_course': { state: 'NOT_SELECTED', attributes: { friendly_name: 'Dryer course' } },
+      'sensor.lg_washtower_dryer_remaining_time': { state: '0', attributes: { friendly_name: 'Dryer remaining time', unit_of_measurement: 'min' } },
+    };
+
+    const washerEditor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    washerEditor.hass = { ...mockHass, entities: comboEntities, states: comboStates } as any;
+    const washerAutofilled = (washerEditor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_washtower',
+      appliance_type: 'washer',
+    });
+
+    expect(washerAutofilled.machine_state_entity).toBe('sensor.lg_washtower_washer_state');
+    expect(washerAutofilled.job_state_entity).toBe('sensor.lg_washtower_washer_course');
+    expect(washerAutofilled.time_entity).toBe('sensor.lg_washtower_washer_remaining_time');
+    expect(washerAutofilled.power_entity).toBe('switch.lg_washtower_washer_power');
+
+    const dryerEditor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    dryerEditor.hass = { ...mockHass, entities: comboEntities, states: comboStates } as any;
+    const dryerAutofilled = (dryerEditor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_washtower',
+      appliance_type: 'dryer',
+    });
+
+    expect(dryerAutofilled.machine_state_entity).toBe('sensor.lg_washtower_dryer_state');
+    expect(dryerAutofilled.job_state_entity).toBe('sensor.lg_washtower_dryer_course');
+    expect(dryerAutofilled.time_entity).toBe('sensor.lg_washtower_dryer_remaining_time');
+    expect(dryerAutofilled.power_entity).toBe('switch.lg_washtower_dryer_power');
+  });
+
+  it('should not override an already-chosen appliance_type when the device changes', () => {
+    const editor = document.createElement('smartthings-card-editor') as ApplianceCardEditor;
+    editor.hass = {
+      ...mockHass,
+      entities: {
+        'switch.lg_washtower_washer_power': { device_id: 'dev_washtower' },
+        'sensor.lg_washtower_washer_state': { device_id: 'dev_washtower' },
+      },
+      states: {
+        'switch.lg_washtower_washer_power': { state: 'ON', attributes: { friendly_name: 'Washer power' } },
+        'sensor.lg_washtower_washer_state': { state: 'RUNNING', attributes: { friendly_name: 'Washer state' } },
+      },
+    } as any;
+
+    // Simulate the user having already picked "dryer" for this card before
+    // (re-)selecting the device -- the text-based detector would otherwise
+    // match "washer" first and clobber that choice.
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_washtower',
+      appliance_type: 'dryer',
+    });
+
+    expect(autofilled.appliance_type).toBe('dryer');
+  });
 });
