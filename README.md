@@ -33,7 +33,7 @@ lovelace:
 
 ## Features
 
-- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **Govee**, **GE Home (GE / Café)**, **Bosch Home Connect**, **LG ThinQ**, and **SmartThinQ LGE Sensors**.
+- **Multi-Integration Support**: Supports appliances from **SmartThings**, **LocalThings**, **Govee**, **GE Home (GE / Café)**, **Bosch Home Connect**, **LG ThinQ**, **SmartThinQ LGE Sensors**, and any **generic MQTT-discovered device** (e.g. local bridges like [rethink](https://github.com/anszom/rethink)).
 
 ### Supported Integrations
 
@@ -46,6 +46,7 @@ lovelace:
 | **Home Connect** | `homeconnect` | Core Home Assistant Bosch / Siemens Home Connect integration |
 | **LG ThinQ** | `lg_thinq` | Core Home Assistant LG ThinQ integration |
 | **SmartThinQ LGE Sensors** | `smartthinq_sensors` | Custom LG ThinQ integration |
+| **Generic MQTT** | `mqtt` | Any MQTT-discovered device, including local bridges like [rethink](https://github.com/anszom/rethink) for LG ThinQ appliances. Raw state values are per-device, so pair with `stage_map`/`mode_map` (see [Example 4](#example-4-rethink-local-lg-thinq-bridge-combo-washerdryer-unit)). |
 
 - **Modern Glassmorphic UI**: Sleek, transparent design elements with vibrant accents.
 - **7-Segment Digital Readouts**: Authentic digital display for timers and temperatures with grey "88" placeholders.
@@ -154,6 +155,40 @@ The `time_entity` and `time_template` automatically parse:
 - **Human Formatted Strings**: `"1h 25m"`, `"45 mins"`, `"90 sec"`
 - **Standard Durations**: `"01:15:00"`, `"25:00"` (MM:SS &rarr; 00:25:00)
 - **ISO Target Timestamps**: `"2026-08-18T16:30:00Z"` &rarr; Live countdown
+
+### Example 4: rethink (Local LG ThinQ Bridge), Combo Washer/Dryer Unit
+[rethink](https://github.com/anszom/rethink) republishes LG ThinQ appliances locally via standard MQTT discovery, so devices show up under the `mqtt` integration and their entities can be wired into this card like any other. Its raw state values are enums specific to each device model (not a fixed vocabulary shared across an integration), so always pair `machine_state_entity`/`job_state_entity` with a `stage_map` built from the values your device actually reports (check the entity's state in Developer Tools).
+
+Combo units (e.g. WashTower) publish both a washer and a dryer as entities on a single HA device — the visual editor's device-picker autofill scopes itself to the appliance type you picked so it won't mix `washer_*` and `dryer_*` entities together, but you'll still add two separate cards, one per appliance:
+
+```yaml
+type: custom:appliance-card
+appliance_type: washer
+machine_state_entity: sensor.lg_washtower_washer_state
+time_entity: sensor.lg_washtower_washer_remaining_time
+power_entity: switch.lg_washtower_washer_power
+lock_entity: binary_sensor.lg_washtower_washer_child_lock
+stage_map:
+  detecting: weight_sensing
+  soak: wash
+  prewash: wash
+  running: wash
+  rinsing: rinse
+  rinsehold: rinse
+  spinning: spin
+```
+
+```yaml
+type: custom:appliance-card
+appliance_type: dryer
+machine_state_entity: sensor.lg_washtower_dryer_state
+time_entity: sensor.lg_washtower_dryer_remaining_time
+power_entity: switch.lg_washtower_dryer_power
+stage_map:
+  running: dry
+  drying: dry
+  cooling: cool
+```
 
 ### Kettle Specific Options
 
