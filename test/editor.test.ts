@@ -29,7 +29,10 @@ describe('ApplianceCardEditor with LocalThings', () => {
       { integration: 'smartthinq_sensors' },
       { integration: 'lg_thinq' },
       { integration: 'ge_home' },
+      { integration: 'home_connect' },
+      { integration: 'home_connect_alt' },
       { integration: 'homeconnect' },
+      { integration: 'homeconnect_ws' },
       { integration: 'govee' },
       { integration: 'govee_ble' },
       { integration: 'mqtt' },
@@ -494,5 +497,38 @@ describe('ApplianceCardEditor with LocalThings', () => {
     expect(autofilled.job_state_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_cavity_state');
     expect(autofilled.time_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_estimated_finish');
     expect(autofilled.temperature_entity).toBe('sensor.samsung_range_tp1x_da_ks_range_0101x_temperature');
+  });
+
+  it('should autofill Home Connect entities including programme_progress', () => {
+    const editor = document.createElement('appliance-card-editor') as ApplianceCardEditor;
+    const homeConnectHass = {
+      ...mockHass,
+      entities: {
+        'switch.washing_machine_power': { device_id: 'dev_homeconnect_washer' },
+        'sensor.washing_machine_operation_state': { device_id: 'dev_homeconnect_washer' },
+        'sensor.washing_machine_programme_progress': { device_id: 'dev_homeconnect_washer' },
+        'sensor.washing_machine_remaining_time': { device_id: 'dev_homeconnect_washer' },
+        'binary_sensor.washing_machine_door': { device_id: 'dev_homeconnect_washer' },
+      },
+      states: {
+        'switch.washing_machine_power': { state: 'on', attributes: { friendly_name: 'Washing Machine Power' } },
+        'sensor.washing_machine_operation_state': { state: 'Run', attributes: { friendly_name: 'Washing Machine Operation State' } },
+        'sensor.washing_machine_programme_progress': { state: '45', attributes: { friendly_name: 'Washing Machine Programme Progress' } },
+        'sensor.washing_machine_remaining_time': { state: '00:35:00', attributes: { friendly_name: 'Washing Machine Remaining Time' } },
+        'binary_sensor.washing_machine_door': { state: 'off', attributes: { friendly_name: 'Washing Machine Door' } },
+      },
+    };
+    editor.hass = homeConnectHass as any;
+
+    const autofilled = (editor as any)._autofillConfig({
+      type: 'custom:appliance-card',
+      device_id: 'dev_homeconnect_washer',
+    });
+
+    expect(autofilled.appliance_type).toBe('washer');
+    expect(autofilled.power_entity).toBe('switch.washing_machine_power');
+    expect(autofilled.machine_state_entity).toBe('sensor.washing_machine_operation_state');
+    expect(autofilled.job_state_entity).toBe('sensor.washing_machine_programme_progress');
+    expect(autofilled.time_entity).toBe('sensor.washing_machine_remaining_time');
   });
 });

@@ -43,7 +43,7 @@ lovelace:
 | **LocalThings** | `localthings` | Local SmartThings integration |
 | **Govee** | `govee`, `govee_ble` | Govee Home / Govee BLE integrations |
 | **GE Home** | `ge_home` | GE Appliances / Café integration |
-| **Home Connect** | `homeconnect` | Core Home Assistant Bosch / Siemens Home Connect integration |
+| **Home Connect** | `home_connect`, `home_connect_alt`, `homeconnect`, `homeconnect_ws` | Core & Custom Home Assistant Bosch / Siemens Home Connect integrations |
 | **LG ThinQ** | `lg_thinq` | Core Home Assistant LG ThinQ integration |
 | **SmartThinQ LGE Sensors** | `smartthinq_sensors` | Custom LG ThinQ integration |
 
