@@ -100,9 +100,9 @@ autolabeler:
       - '/^deps(\(.+\))?:/i'
 
 template: |
-  [![Downloads for this release](https://img.shields.io/github/downloads/firstof9/ha-appliance-card/$RESOLVED_VERSION/total.svg)](https://github.com/firstof9/ha-appliance-card/releases/$RESOLVED_VERSION)
+  [![Downloads for this release](https://img.shields.io/github/downloads/firstof9/ha-appliance-status-card/$RESOLVED_VERSION/total.svg)](https://github.com/firstof9/ha-appliance-status-card/releases/$RESOLVED_VERSION)
 
   $CHANGES
 
   ## Links
-  - [Submit bugs/feature requests](https://github.com/firstof9/ha-appliance-card/issues)
+  - [Submit bugs/feature requests](https://github.com/firstof9/ha-appliance-status-card/issues)

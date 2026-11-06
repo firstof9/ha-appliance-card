@@ -2,12 +2,12 @@
 
 A custom Home Assistant card for tracking and controlling home appliances — refrigerators, microwaves, ovens, cooktops, dishwashers, washers, dryers and kettles — from SmartThings, LocalThings and others.
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=firstof9&repository=ha-appliance-card&category=plugin)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=firstof9&repository=ha-appliance-status-card&category=plugin)
 
-![Preview](https://raw.githubusercontent.com/firstof9/ha-appliance-card/main/screenshots/smartthings_card.gif)
+![Preview](https://raw.githubusercontent.com/firstof9/ha-appliance-status-card/main/screenshots/smartthings_card.gif)
 
 > [!NOTE]
-> `ha-smartthings-card` has been renamed to **`ha-appliance-card`**. The element `custom:smartthings-card` is deprecated and will be removed in a future release. Please update your card configuration to `type: custom:appliance-card`.
+> `ha-smartthings-card` (briefly renamed to `ha-appliance-card`) has been renamed to **`ha-appliance-status-card`** to reflect its broad multi-brand appliance support beyond SmartThings and to prevent HACS installation directory collisions with existing community cards. The element `custom:smartthings-card` is deprecated and will be removed in a future release. Please update your card configuration to `type: custom:appliance-card`.
 
 ## Installation
 
@@ -16,12 +16,12 @@ A custom Home Assistant card for tracking and controlling home appliances — re
 1. Click the badge above or:
 2. Go to HACS -> Frontend
 3. Click on the three dots in the top right corner and select "Custom repositories"
-4. Add `https://github.com/firstof9/ha-appliance-card` as a "Lovelace" repository
+4. Add `https://github.com/firstof9/ha-appliance-status-card` as a "Lovelace" repository
 5. Click "Install"
 
 ### Manual
 
-1. Download `appliance-card.js` from the [latest release](https://github.com/firstof9/ha-appliance-card/releases/latest) and copy it to your `<config>/www/` directory.
+1. Download `appliance-card.js` from the [latest release](https://github.com/firstof9/ha-appliance-status-card/releases/latest) and copy it to your `<config>/www/` directory.
 2. Add the following to your `configuration.yaml` or through the UI resources:
 
 ```yaml
@@ -115,7 +115,7 @@ For manual YAML configuration:
 
 ## Template & Virtual Appliance Examples
 
-`ha-appliance-card` supports non-smart appliances and custom integrations (ESPHome, Shelly, Tuya, Bosch, Miele, MQTT, Virtual Helper Sensors) using flexible duration parsers, stage mapping, and live Jinja2 template evaluation.
+`ha-appliance-status-card` supports non-smart appliances and custom integrations (ESPHome, Shelly, Tuya, Bosch, Miele, MQTT, Virtual Helper Sensors) using flexible duration parsers, stage mapping, and live Jinja2 template evaluation.
 
 ### Example 1: Template Washer with Stage Mapping & Seconds Timer
 ```yaml
@@ -176,7 +176,7 @@ This card supports Home Assistant themes and uses standard CSS variables for sty
 
 ## Assets
 
-Images are generated via a build script into the `images/` directory of this repository, and are inlined into the bundle at build time. The card resolves each icon from that embedded map; the `/local/community/ha-appliance-card/images/` path is only a last-resort fallback for assets that are not bundled.
+Images are generated via a build script into the `images/` directory of this repository, and are inlined into the bundle at build time. The card resolves each icon from that embedded map; the `/local/community/ha-appliance-status-card/images/` path is only a last-resort fallback for assets that are not bundled.
 
 ## Development
 

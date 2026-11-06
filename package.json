@@ -1,5 +1,5 @@
 {
-  "name": "ha-appliance-card",
+  "name": "ha-appliance-status-card",
   "version": "0.3.9",
   "description": "A custom Home Assistant Lovelace card for tracking and controlling home appliances (SmartThings, LocalThings, etc.).",
   "keywords": [

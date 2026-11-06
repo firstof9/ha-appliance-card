@@ -111,5 +111,5 @@ export function getAsset(appliance: string, filename: string): string {
     if (base) return base;
   }
 
-  return `/local/community/ha-appliance-card/images/${appliance}/${filename}`;
+  return `/local/community/ha-appliance-status-card/images/${appliance}/${filename}`;
 }
