@@ -1,5 +1,5 @@
 {
-  "name": "Appliance Card",
+  "name": "Appliance Status Card",
   "render_readme": true,
   "filename": "appliance-card.js"
 }
