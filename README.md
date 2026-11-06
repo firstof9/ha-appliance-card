@@ -7,7 +7,7 @@ A custom Home Assistant card for tracking and controlling home appliances — re
 ![Preview](https://raw.githubusercontent.com/firstof9/ha-appliance-status-card/main/screenshots/smartthings_card.gif)
 
 > [!NOTE]
-> `ha-smartthings-card` has been renamed to **`ha-appliance-status-card`**. The element `custom:smartthings-card` is deprecated and will be removed in a future release. Please update your card configuration to `type: custom:appliance-card`.
+> `ha-smartthings-card` (briefly renamed to `ha-appliance-card`) has been renamed to **`ha-appliance-status-card`** to reflect its broad multi-brand appliance support beyond SmartThings and to prevent HACS installation directory collisions with existing community cards. The element `custom:smartthings-card` is deprecated and will be removed in a future release. Please update your card configuration to `type: custom:appliance-card`.
 
 ## Installation
 
